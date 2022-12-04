@@ -1,0 +1,12 @@
+.idea/
+.vscode/
+
+# go相关
+go.sum
+*.exe
+
+# 前端相关
+node_modules/
+dist/
+package-lock.json
+web/
