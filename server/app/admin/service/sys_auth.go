@@ -140,6 +140,7 @@ func (s *SysAuthService) GetAuthPermission(c *gin.Context) (permissions []string
 }
 
 func GetPermissionList(c *gin.Context) (permissions []dto.UserPermissionVo) {
+
 	var currentUserId = utils2.GetUserId(c)
 	var cacheKey = consts.CacheKeyUserPermission + strconv.FormatInt(currentUserId, 10)
 
