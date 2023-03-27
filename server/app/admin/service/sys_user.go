@@ -3,85 +3,159 @@ package service
 import (
 	"go-fast-admin/server/app/admin/dto"
 	"go-fast-admin/server/app/admin/model"
+	utils2 "go-fast-admin/server/common/utils"
 	"go-fast-admin/server/global"
+	"gopkg.in/errgo.v2/fmt/errors"
 )
 
 type SysUserService struct{}
 
-// Page 用户分页查询
-func (sysUserService *SysUserService) Page(query dto.SysUserQuery) (list []dto.SysUserVo, total int64, err error) {
+// Query 用户分页查询
+func (s *SysUserService) Query(query dto.SysUserQuery) (list []dto.SysUserVo, total int64, err error) {
 	db := global.DB.Model(&model.SysUser{})
 	//查询条件
-	if query.NickName != "" {
-		db = db.Where("`nick_name` LIKE ?", "%"+query.NickName+"%")
+	if query.UserName != "" {
+		value := "%" + query.UserName + "%"
+		db = db.Where("nick_name LIKE ? or user_name like ? or phone like ?", value, value, value)
 	}
-	offset := (query.PageIndex - 1) * query.PageSize
+
+	//总条数
+	db.Count(&total)
+
+	offset := (query.PageNum - 1) * query.PageSize
 	//查询数据
 	err = db.Order("id DESC").Offset(offset).Limit(query.PageSize).Find(&list).Error
 	if err != nil {
 		return nil, 0, err
 	}
-	//总条数
-	db.Count(&total)
 	return list, total, err
 }
 
-// Detail 获取用户详情
-func (sysUserService *SysUserService) Detail(id uint64) (obj dto.SysUserVo, err error) {
-	err = global.DB.Model(&model.SysUser{}).Where("id = ?", id).Scan(&obj).Error
-	return obj, err
-}
-
-// List 用户列表
-func (sysUserService *SysUserService) List() (objs []dto.SysUserVo, err error) {
-	err = global.DB.Model(&model.SysUser{}).Scan(&objs).Error
-	return objs, err
-}
-
 // Add 添加用户
-func (sysUserService *SysUserService) Add(addDto dto.SysUserAddDto) error {
+func (s *SysUserService) Add(addDto dto.SysUserAddDto) error {
+
+	if addDto.UserName == "" {
+		return errors.New("账号名称不允许为空")
+	}
+
+	var count int64
+	global.DB.Model(&model.SysUser{}).Where("user_name = ?", addDto.UserName).Count(&count)
+	if count != 0 {
+		return errors.New("账号名称已存在")
+	}
+
+	//密码盐
+	var salt = utils2.GetRoundNumber(15)
+
+	//加密 => MD5（密码+密码盐）
+	var pwd = utils2.Md5(addDto.Password + salt)
+
 	var user = &model.SysUser{
 		UserName: addDto.UserName,
 		NickName: addDto.NickName,
-		UserType: addDto.UserType,
+		UserType: 0,
 		Email:    addDto.Email,
 		Phone:    addDto.Phone,
-		Password: addDto.Password,
-		SexType:  addDto.SexType,
-		Avatar:   addDto.Avatar,
+		Password: pwd,
+		Sex:      addDto.Sex,
 		Status:   addDto.Status,
 		Remark:   addDto.Remark,
 	}
 	err := global.DB.Create(user).Error
+	if err != nil {
+		return err
+	}
+	err = SetUserRole(user.Id, addDto.RoleIds)
 	return err
 }
 
 // Update 更新用户
-func (sysUserService *SysUserService) Update(updateDto dto.SysUserUpdateDto) error {
-	var user = &model.SysUser{
-		Id:       updateDto.Id,
-		NickName: updateDto.NickName,
-		UserType: updateDto.UserType,
-		Email:    updateDto.Email,
-		Phone:    updateDto.Phone,
-		SexType:  updateDto.SexType,
-		Avatar:   updateDto.Avatar,
-		Status:   updateDto.Status,
-		Remark:   updateDto.Remark,
+func (s *SysUserService) Update(updateDto dto.SysUserUpdateDto) error {
+	err := global.DB.Model(&model.SysUser{}).Where("id = ?", updateDto.Id).Updates(map[string]interface{}{
+		"nick_name": updateDto.NickName,
+		"user_type": 0,
+		"email":     updateDto.Email,
+		"phone":     updateDto.Phone,
+		"sex":       updateDto.Sex,
+		"status":    updateDto.Status,
+		"remark":    updateDto.Remark,
+	}).Error
+	if err != nil {
+		return err
 	}
-	err := global.DB.Updates(user).Error
+	err = SetUserRole(updateDto.Id, updateDto.RoleIds)
 	return err
 }
 
 // Delete 删除用户
-func (sysUserService *SysUserService) Delete(id uint64) error {
+func (s *SysUserService) Delete(id int64) error {
 	err := global.DB.Delete(&model.SysUser{}, "id = ?", id).Error
 	return err
 }
 
-//
-//// ResetPwd 重置密码
-//func (sysUserService *SysUserService) ResetPwd(resetPwdDto dto.ResetPwdDto) error {
-//
-//	pwd := utils.Md5(resetPwdDto.Password + user.Salt)
-//}
+// Detail 获取用户详情
+func (s *SysUserService) Detail(id int64) (obj *dto.SysUserVo, err error) {
+	err = global.DB.Model(&model.SysUser{}).Where("id = ?", id).Scan(&obj).Error
+	if err != nil {
+		return nil, err
+	}
+	var roleIds []int64
+	err = global.DB.Model(&model.SysUserRole{}).Select("role_id").Where("user_id = ?", id).Scan(&roleIds).Error
+	if err != nil {
+		return nil, err
+	}
+	obj.RoleIds = roleIds
+	return obj, err
+}
+
+// List 用户列表
+func (s *SysUserService) List() (objs []dto.SysUserVo, err error) {
+	err = global.DB.Model(&model.SysUser{}).Scan(&objs).Error
+	return objs, err
+}
+
+// ResetPwd 重置密码
+func (s *SysUserService) ResetPwd(reqDto dto.ResetPwdDto) error {
+
+	//密码盐
+	salt := utils2.GetRoundNumber(15)
+
+	//加密 => MD5（密码+密码盐）
+	pwd := utils2.Md5(reqDto.Password + salt)
+
+	//更新密码
+	err := global.DB.Model(&model.SysUser{}).Where("id = ?", reqDto.UserId).Update("password", pwd).Error
+	return err
+}
+
+// SetUserRole 设置用户角色
+func SetUserRole(userId int64, roleIds []int64) error {
+
+	err := global.DB.Delete(&model.SysUserRole{}, "user_id = ?", userId).Error
+	if err != nil {
+		return err
+	}
+	if len(roleIds) == 0 {
+		return nil
+	}
+	var userRoles []model.SysUserRole
+	for i := 0; i < len(roleIds); i++ {
+		userRole := model.SysUserRole{
+			UserId: userId,
+			RoleId: roleIds[i],
+		}
+		userRoles = append(userRoles, userRole)
+	}
+	err = global.DB.Create(userRoles).Error
+	return err
+
+}
+
+// SetUserStatus 设置用户状态
+func (s *SysUserService) SetUserStatus(reqDto dto.SetUserStateDto) error {
+
+	//用户状态
+	err := global.DB.Model(&model.SysUser{}).Where("id = ?", reqDto.UserId).Update("status", reqDto.Status).Error
+	return err
+
+}

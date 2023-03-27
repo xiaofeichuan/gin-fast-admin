@@ -4,14 +4,14 @@ import (
 	"fmt"
 	"go-fast-admin/server/app/admin/dto"
 	"go-fast-admin/server/app/admin/model"
+	"go-fast-admin/server/common/utils"
 	"go-fast-admin/server/global"
-	"go-fast-admin/server/utils"
 )
 
 type SysGenTableColumnService struct{}
 
 // ImportGenTableColumn 导入表字段
-func (sysGenTableColumnService *SysGenTableColumnService) ImportGenTableColumn(tableNames []string, tables []model.SysGenTable) error {
+func (s *SysGenTableColumnService) ImportGenTableColumn(tableNames []string, tables []model.SysGenTable) error {
 
 	var columnInfos []dto.TableColumnInfoVo
 	columnSql := `		

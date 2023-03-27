@@ -1,6 +1,10 @@
 package utils
 
-import "strings"
+import (
+	"math/rand"
+	"strings"
+	"time"
+)
 
 // ToPascalCase
 // 蛇形命名法=>帕斯卡命名法
@@ -46,7 +50,7 @@ func ToCamelCase(snakeCase string) string {
 func GetGoType(columnName string, columnType string) string {
 	if strings.Contains(columnType, "int") {
 		if columnName == "id" || strings.Contains(columnType, "_id") {
-			return "uint64"
+			return "int64"
 		}
 		//判断是不是bool
 		var isStr = string([]byte(columnName)[:3])
@@ -64,4 +68,16 @@ func GetGoType(columnName string, columnType string) string {
 	} else {
 		return columnType
 	}
+}
+
+// GetRoundNumber 获取随机数
+func GetRoundNumber(size int) string {
+	str := "0123456789abcdefghijklmnopqrstuvwxyz"
+	bytes := []byte(str)
+	var result []byte
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	for i := 0; i < size; i++ {
+		result = append(result, bytes[r.Intn(len(bytes))])
+	}
+	return string(result)
 }

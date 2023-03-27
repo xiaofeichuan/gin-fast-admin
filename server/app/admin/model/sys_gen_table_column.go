@@ -3,8 +3,8 @@ package model
 import "go-fast-admin/server/common"
 
 type SysGenTableColumn struct {
-	Id            uint64 `json:"id" gorm:"primaryKey;comment:Id"`
-	TableId       uint64 `json:"tableId" gorm:"comment:表编号"`
+	Id            int64  `json:"id" gorm:"primaryKey;comment:Id"`
+	TableId       int64  `json:"tableId" gorm:"comment:表编号"`
 	ColumnName    string `json:"columnName" gorm:"comment:字段名"`
 	ColumnComment string `json:"columnComment" gorm:"comment:字段注释"`
 	ColumnType    string `json:"columnType" gorm:"comment:字段类型"`

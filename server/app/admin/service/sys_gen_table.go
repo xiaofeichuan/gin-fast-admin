@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"go-fast-admin/server/app/admin/dto"
 	"go-fast-admin/server/app/admin/model"
+	"go-fast-admin/server/common/utils"
 	"go-fast-admin/server/global"
-	"go-fast-admin/server/utils"
 	"strings"
 	"text/template"
 )
@@ -14,7 +14,7 @@ import (
 type SysGenTableService struct{}
 
 // GetDBTableInfos 获取当前数据库所有表信息
-func (sysGenTableService *SysGenTableService) GetDBTableInfos() (data []dto.TableInfoVo, err error) {
+func (s *SysGenTableService) GetDBTableInfos() (data []dto.TableInfoVo, err error) {
 	var tables []dto.TableInfoVo
 	sql := `
 		SELECT 
@@ -31,7 +31,7 @@ func (sysGenTableService *SysGenTableService) GetDBTableInfos() (data []dto.Tabl
 }
 
 // ImportGentTable 导入表
-func (sysGenTableService *SysGenTableService) ImportGentTable(tableNames []string) (tables []model.SysGenTable, err error) {
+func (s *SysGenTableService) ImportGentTable(tableNames []string) (tables []model.SysGenTable, err error) {
 	var tableInfos []dto.TableInfoVo
 	sql := `
 		SELECT 
@@ -65,7 +65,7 @@ func (sysGenTableService *SysGenTableService) ImportGentTable(tableNames []strin
 }
 
 // PreviewCode 预览代码
-func (sysGenTableService *SysGenTableService) PreviewCode(tableId uint64) (vos []dto.PreviewCodeVo, err error) {
+func (s *SysGenTableService) PreviewCode(tableId int64) (vos []dto.PreviewCodeVo, err error) {
 
 	table := GetTableDetail(tableId)
 
@@ -94,6 +94,7 @@ func (sysGenTableService *SysGenTableService) PreviewCode(tableId uint64) (vos [
 	}
 	var modelContent bytes.Buffer
 	err = modelTemp.Execute(&modelContent, table)
+	fmt.Println(modelContent.String())
 	vos = append(vos, dto.PreviewCodeVo{FileName: "model.go", FileContent: modelContent.String()})
 
 	//router文件
@@ -118,7 +119,7 @@ func (sysGenTableService *SysGenTableService) PreviewCode(tableId uint64) (vos [
 }
 
 // GetTableDetail 表数据详情
-func GetTableDetail(tableId uint64) (table dto.TableInfoVo) {
+func GetTableDetail(tableId int64) (table dto.TableInfoVo) {
 	global.DB.Model(model.SysGenTable{Id: tableId}).Scan(&table)
 
 	var columnList *[]model.SysGenTableColumn

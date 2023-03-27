@@ -9,46 +9,18 @@ import (
 
 type SysUserApi struct{}
 
-// Page
+// Query
 // @Tags 用户
-// @Summary 用户分页查询
+// @Summary 用户查询
 // @Security ApiKeyAuth
 // @Param data query dto.SysUserQuery true "请求参数"
 // @Success 200 {object} response.JsonResult{data=response.PageResult{list=[]dto.SysUserVo}}
-// @Router /system/user/page [get]
-func (sysUserApi *SysUserApi) Page(c *gin.Context) {
+// @Router /system/user/query [get]
+func (sysUserApi *SysUserApi) Query(c *gin.Context) {
 	var query dto.SysUserQuery
 	c.ShouldBindQuery(&query)
-	list, total, err := userService.Page(query)
-	response.Complete(response.PageResult{
-		List:       list,
-		TotalCount: total,
-	}, err, c)
-}
-
-// Detail
-// @Tags 用户
-// @Summary 获取用户详情
-// @Security ApiKeyAuth
-// @Param data query request.IdInfoDto true "用户id"
-// @Success 200 {object} response.JsonResult{data=dto.SysUserVo}
-// @Router /system/user/detail [get]
-func (sysUserApi *SysUserApi) Detail(c *gin.Context) {
-	var idInfoDto request.IdInfoDto
-	c.ShouldBindQuery(&idInfoDto)
-	obj, err := userService.Detail(idInfoDto.Id)
-	response.Complete(obj, err, c)
-}
-
-// List
-// @Tags 用户
-// @Summary 用户列表
-// @Security ApiKeyAuth
-// @Success 200 {object} response.JsonResult{data=[]dto.SysUserVo}
-// @Router /system/user/list [get]
-func (sysUserApi *SysUserApi) List(c *gin.Context) {
-	objs, err := userService.List()
-	response.Complete(objs, err, c)
+	list, total, err := userService.Query(query)
+	response.Complete(response.PageResult{List: list, TotalCount: total}, err, c)
 }
 
 // Add
@@ -93,32 +65,55 @@ func (sysUserApi *SysUserApi) Delete(c *gin.Context) {
 	response.CompleteWithMessage(err, c)
 }
 
-//
-//// ResetPwd
-//// @Tags 用户
-//// @Summary 重置密码
-//// @Security ApiKeyAuth
-//// @Param data body dto.ResetPwdDto true "请求参数"
-//// @Success 200 {object} response.JsonResult
-//// @Router /system/user/resetPwd [post]
-//func (sysUserApi *SysUserApi) ResetPwd(c *gin.Context) {
-//	var resetPwdDto dto.ResetPwdDto
-//	c.ShouldBindJSON(&resetPwdDto)
-//	err := userService.ResetPwd(resetPwdDto)
-//	response.CompleteWithMessage(err, c)
-//}
+// Detail
+// @Tags 用户
+// @Summary 获取用户详情
+// @Security ApiKeyAuth
+// @Param data query request.IdInfoDto true "用户id"
+// @Success 200 {object} response.JsonResult{data=dto.SysUserVo}
+// @Router /system/user/detail [get]
+func (sysUserApi *SysUserApi) Detail(c *gin.Context) {
+	var idInfoDto request.IdInfoDto
+	c.ShouldBindQuery(&idInfoDto)
+	obj, err := userService.Detail(idInfoDto.Id)
+	response.Complete(obj, err, c)
+}
 
-//
-//// UpdatePwd
-//// @Tags 用户
-//// @Summary 更新密码
-//// @Security ApiKeyAuth
-//// @Param data body dto.UpdatePwdDto true "请求参数"
-//// @Success 200 {object} response.JsonResult
-//// @Router /system/user/updatePwd [post]
-//func (sysUserApi *SysUserApi) UpdatePwd(c *gin.Context) {
-//	var loginDto dto.LoginDto
-//	c.ShouldBindJSON(&loginDto)
-//	token, err := userService.Login(loginDto)
-//	response.Complete(token, err, c)
-//}
+// List
+// @Tags 用户
+// @Summary 用户列表
+// @Security ApiKeyAuth
+// @Success 200 {object} response.JsonResult{data=[]dto.SysUserVo}
+// @Router /system/user/list [get]
+func (sysUserApi *SysUserApi) List(c *gin.Context) {
+	objs, err := userService.List()
+	response.Complete(objs, err, c)
+}
+
+// ResetPwd
+// @Tags 用户
+// @Summary 重置密码
+// @Security ApiKeyAuth
+// @Param data body dto.ResetPwdDto true "请求参数"
+// @Success 200 {object} response.JsonResult
+// @Router /system/user/resetPwd [post]
+func (sysUserApi *SysUserApi) ResetPwd(c *gin.Context) {
+	var reqDto dto.ResetPwdDto
+	c.ShouldBindJSON(&reqDto)
+	err := userService.ResetPwd(reqDto)
+	response.CompleteWithMessage(err, c)
+}
+
+// SetUserStatus
+// @Tags 用户
+// @Summary 设置用户状态
+// @Security ApiKeyAuth
+// @Param data body dto.SetUserStateDto true "请求参数"
+// @Success 200 {object} response.JsonResult
+// @Router /system/user/setStatus [post]
+func (sysUserApi *SysUserApi) SetUserStatus(c *gin.Context) {
+	var reqDto dto.SetUserStateDto
+	c.ShouldBindJSON(&reqDto)
+	err := userService.SetUserStatus(reqDto)
+	response.CompleteWithMessage(err, c)
+}

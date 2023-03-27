@@ -35,7 +35,7 @@ func ({{.ParamName}}Service *{{.ModelName}}Service) Page(query dto.{{.ModelName}
 }
 
 // Detail {{.FunctionName}}详情
-func ({{.ParamName}}Service *{{.ModelName}}Service) Detail(id uint64) (obj dto.{{.ModelName}}Vo, err error) {
+func ({{.ParamName}}Service *{{.ModelName}}Service) Detail(id int64) (obj dto.{{.ModelName}}Vo, err error) {
 	err = global.DB.Model(&model.{{.ModelName}}{}).Where("id = ?", id).Scan(&obj).Error
 	return obj, err
 }
@@ -74,7 +74,7 @@ func ({{.ParamName}}Service *{{.ModelName}}Service) Update(updateDto dto.{{.Mode
 }
 
 // Delete 删除{{.FunctionName}}
-func ({{.ParamName}}Service *{{.ModelName}}Service) Delete(id uint64) error {
+func ({{.ParamName}}Service *{{.ModelName}}Service) Delete(id int64) error {
 	err := global.DB.Delete(&model.{{.ModelName}}{}, "id = ?", id).Error
 	return err
 }

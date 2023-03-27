@@ -13,7 +13,7 @@ type SysUserCreateDto struct {
 
 // SysUserUpdateDto 更新
 type SysUserUpdateDto struct {
-	Id uint64 `json:"id"` //编号
+	Id int64 `json:"id"` //编号
 	SysUserCreateDto
 }
 

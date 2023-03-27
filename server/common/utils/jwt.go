@@ -4,14 +4,15 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
+	"go-fast-admin/server/app/admin/consts"
 	"time"
 )
 
 type UserAuthClaims struct {
-	UserId   uint64 //用户Id
-	UserName string //用户账号
-	NickName string //用户昵称
-	UserType int    //用户类型（0普通账号，1超级管理员）
+	UserId   int64           //用户Id
+	UserName string          //用户账号
+	NickName string          //用户昵称
+	UserType consts.UserType //用户类型（0普通账号，1超级管理员）
 	jwt.StandardClaims
 }
 
@@ -45,8 +46,8 @@ func ParseToken(tokenStr string) (*jwt.Token, error) {
 	})
 }
 
-// GetCurrentUser 获取当前用户信息
-func GetCurrentUser(c *gin.Context) *UserAuthClaims {
+// GetUserInfo 获取当前用户信息
+func GetUserInfo(c *gin.Context) *UserAuthClaims {
 	claims, exists := c.Get("claims")
 
 	userInfo, ok := claims.(*UserAuthClaims)
@@ -57,8 +58,17 @@ func GetCurrentUser(c *gin.Context) *UserAuthClaims {
 
 }
 
-// GetCurrentUserId 获取当前用户Id
-func GetCurrentUserId(c *gin.Context) uint64 {
-	currentUser := GetCurrentUser(c)
-	return currentUser.UserId
+// GetUserId 获取当前用户Id
+func GetUserId(c *gin.Context) int64 {
+	userInfo := GetUserInfo(c)
+	return userInfo.UserId
+}
+
+// IsSuperAdmin 是否超级管理员
+func IsSuperAdmin(c *gin.Context) bool {
+	userInfo := GetUserInfo(c)
+	if userInfo.UserType == consts.UserTypeSuperAdmin {
+		return true
+	}
+	return false
 }
