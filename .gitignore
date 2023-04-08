@@ -9,4 +9,4 @@ go.sum
 node_modules/
 dist/
 package-lock.json
-web/
+
