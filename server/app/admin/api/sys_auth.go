@@ -56,17 +56,6 @@ func (*SysAuthApi) GetAuthMenu(c *gin.Context) {
 	response.Complete(authMenu, err, c)
 }
 
-// GetAuthPermission
-// @Tags 授权
-// @Summary 获取用户权限
-// @Security ApiKeyAuth
-// @Success 200 {object} response.JsonResult{data=[]string}
-// @Router /system/auth/permission [get]
-func (*SysAuthApi) GetAuthPermission(c *gin.Context) {
-	permissions, err := authService.GetAuthPermission(c)
-	response.Complete(permissions, err, c)
-}
-
 // UpdatePwd
 // @Tags 授权
 // @Summary 更新密码

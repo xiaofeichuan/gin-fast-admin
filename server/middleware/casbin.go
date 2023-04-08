@@ -29,7 +29,7 @@ func Casbin() gin.HandlerFunc {
 			context.Next()
 			return
 		}
-		permissionList := service.GetPermissionList(context)
+		permissionList := service.GetUserPermission(utils.GetUserId(context))
 		//是否允许访问
 		var isAllow bool
 		for i := 0; i < len(permissionList); i++ {
@@ -42,8 +42,8 @@ func Casbin() gin.HandlerFunc {
 		}
 		//检查接口是否有权限访问
 		if !isAllow {
-			fmt.Println("无权限访问")
-			response.FailWithCode(http.StatusUnauthorized, "您没有该接口访问权限", context)
+			fmt.Println("禁止访问")
+			response.FailWithCode(http.StatusForbidden, "禁止访问", context)
 			context.Abort() //结束后续操作
 			return
 		}

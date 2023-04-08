@@ -39,10 +39,9 @@ func (s *SystemRouter) InitPrivateRouter(routerGroup *gin.RouterGroup) {
 	//权限
 	authRouter := routerGroup.Group("/system/auth")
 	{
-		authRouter.GET("userInfo", sysAuthApi.GetUserInfo)         // 获取用户信息
-		authRouter.GET("menu", sysAuthApi.GetAuthMenu)             // 获取用户菜单（树状）
-		authRouter.GET("permission", sysAuthApi.GetAuthPermission) // 获取用户权限
-		authRouter.POST("updatePwd", sysAuthApi.UpdatePwd)         // 更新密码
+		authRouter.GET("userInfo", sysAuthApi.GetUserInfo) // 获取用户信息
+		authRouter.GET("menu", sysAuthApi.GetAuthMenu)     // 获取用户菜单（树状）
+		authRouter.POST("updatePwd", sysAuthApi.UpdatePwd) // 更新密码
 	}
 
 	//用户
@@ -55,7 +54,7 @@ func (s *SystemRouter) InitPrivateRouter(routerGroup *gin.RouterGroup) {
 		userRouter.GET("detail", sysUserApi.Detail)            // 用户详情
 		userRouter.GET("list", sysUserApi.List)                // 用户列表
 		userRouter.POST("resetPwd", sysUserApi.ResetPwd)       // 重置密码
-		userRouter.POST("setStatus", sysUserApi.SetUserStatus) // 重置密码
+		userRouter.POST("setStatus", sysUserApi.SetUserStatus) // 设置状态
 	}
 
 	//菜单

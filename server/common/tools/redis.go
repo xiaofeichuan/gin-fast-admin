@@ -2,9 +2,9 @@ package tools
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/go-redis/redis/v8"
-	"go-fast-admin/server/common/utils"
 	"time"
 )
 
@@ -16,6 +16,7 @@ var (
 	rdb *redis.Client
 )
 
+// InitRedis 初始化
 func InitRedis() *redis.Client {
 	rdb = redis.NewClient(&redis.Options{
 		Addr:     "localhost:6379",
@@ -33,14 +34,17 @@ func InitRedis() *redis.Client {
 
 // Set 设置缓存
 func (*RedisUtil) Set(key string, value interface{}, expiration time.Duration) {
-	rdb.Set(ctx, key, utils.Json.Serialize(value), expiration)
+	//序列化
+	data, _ := json.Marshal(value)
+	rdb.Set(ctx, key, string(data), expiration)
 }
 
 // Get 获取缓存
-func (*RedisUtil) Get(key string, value interface{}) error {
-	val, err := rdb.Get(ctx, key).Result()
-	utils.Json.Deserialize(val, value)
-	return err
+func (*RedisUtil) Get(key string, value interface{}) {
+	str, _ := rdb.Get(ctx, key).Result()
+	//反序列化
+	json.Unmarshal([]byte(str), &value)
+
 }
 
 // Del 删除缓存
@@ -50,7 +54,7 @@ func (*RedisUtil) Del(key string) {
 
 // DelByPattern 模糊删除缓存
 func (*RedisUtil) DelByPattern(pattern string) {
-	keys := rdb.Keys(ctx, pattern).Val()
+	keys, _ := rdb.Keys(ctx, pattern+"*").Result()
 	for i := 0; i < len(keys); i++ {
 		rdb.Del(ctx, keys[i])
 	}

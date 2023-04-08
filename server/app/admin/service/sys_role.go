@@ -4,7 +4,9 @@ import (
 	"go-fast-admin/server/app/admin/consts"
 	"go-fast-admin/server/app/admin/dto"
 	"go-fast-admin/server/app/admin/model"
+	"go-fast-admin/server/common/tools"
 	"go-fast-admin/server/global"
+	"gopkg.in/errgo.v2/fmt/errors"
 )
 
 type SysRoleService struct{}
@@ -42,7 +44,14 @@ func (s *SysRoleService) Add(addDto dto.SysRoleAddDto) error {
 	if err != nil {
 		return err
 	}
+
+	//设置角色菜单
 	err = SetRoleMenu(role.Id, addDto.MenuIds)
+
+	//删除缓存
+	tools.Redis.DelByPattern(consts.CacheKeySysUserMenu)
+	tools.Redis.DelByPattern(consts.CacheKeySysUserPermission)
+
 	return err
 }
 
@@ -58,13 +67,35 @@ func (s *SysRoleService) Update(updateDto dto.SysRoleUpdateDto) error {
 	if err != nil {
 		return err
 	}
+
+	//设置角色菜单
 	err = SetRoleMenu(updateDto.Id, updateDto.MenuIds)
+
+	//删除缓存
+	tools.Redis.DelByPattern(consts.CacheKeySysUserMenu)
+	tools.Redis.DelByPattern(consts.CacheKeySysUserPermission)
+
 	return err
 }
 
 // Delete 删除角色
 func (s *SysRoleService) Delete(id int64) error {
+	var total int64
+	global.DB.Model(&model.SysRoleMenu{}).Where("role_id = ?", id).Count(&total)
+	if total > 0 {
+		return errors.New("该角色与菜单存在关联，禁止删除")
+	}
+	global.DB.Model(&model.SysUserRole{}).Where("role_id = ?", id).Count(&total)
+	if total > 0 {
+		return errors.New("该角色与用户存在关联，禁止删除")
+	}
+
 	err := global.DB.Delete(&model.SysRole{}, "id = ?", id).Error
+
+	//删除缓存
+	tools.Redis.DelByPattern(consts.CacheKeySysUserMenu)
+	tools.Redis.DelByPattern(consts.CacheKeySysUserPermission)
+
 	return err
 }
 
@@ -75,7 +106,7 @@ func (s *SysRoleService) Detail(id int64) (obj *dto.SysRoleVo, err error) {
 		return nil, err
 	}
 	var menuIds []int64
-	err = global.DB.Model(&model.SysRoleMenu{}).Select("menu_id").Where("role_id = ?", id).Scan(&menuIds).Error
+	err = global.DB.Model(&model.SysRoleMenu{}).Select("menu_id").Where("role_id = ?", id).Order("id ASC").Scan(&menuIds).Error
 	if err != nil {
 		return nil, err
 	}

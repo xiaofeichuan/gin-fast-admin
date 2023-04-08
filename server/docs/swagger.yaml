@@ -42,10 +42,13 @@ definitions:
   consts.MenuType:
     enum:
     - 0
+    - 1
     type: integer
     x-enum-comments:
+      MenuTypeCatalog: 目录
       MenuTypeMenu: 菜单
     x-enum-varnames:
+    - MenuTypeCatalog
     - MenuTypeMenu
   consts.RoleStatus:
     enum:
@@ -55,6 +58,14 @@ definitions:
       RoleStatusEnable: 启用
     x-enum-varnames:
     - RoleStatusEnable
+  consts.UserGender:
+    enum:
+    - 0
+    type: integer
+    x-enum-comments:
+      UserGenderNone: 未知
+    x-enum-varnames:
+    - UserGenderNone
   consts.UserStatus:
     enum:
     - 0
@@ -98,6 +109,14 @@ definitions:
         type: string
       captchaId:
         type: string
+    type: object
+  dto.DictItemVo:
+    properties:
+      dictItemName:
+        description: 选项名称
+        type: string
+      dictItemValue:
+        description: 选项值
     type: object
   dto.LoginDto:
     properties:
@@ -356,6 +375,11 @@ definitions:
       id:
         description: 编号
         type: integer
+      items:
+        description: 选项
+        items:
+          $ref: '#/definitions/dto.DictItemVo'
+        type: array
       remark:
         description: 备注
         type: string
@@ -602,6 +626,11 @@ definitions:
       id:
         description: 编号
         type: integer
+      menuIds:
+        description: 角色菜单
+        items:
+          type: integer
+        type: array
       remark:
         description: 备注
         type: string
@@ -627,6 +656,10 @@ definitions:
       email:
         description: 用户邮箱
         type: string
+      gender:
+        allOf:
+        - $ref: '#/definitions/consts.UserGender'
+        description: 用户性别（0未知，1男，2女）
       nickName:
         description: 用户昵称
         type: string
@@ -644,9 +677,6 @@ definitions:
         items:
           type: integer
         type: array
-      sex:
-        description: 用户性别（0未知，1男，2女）
-        type: integer
       status:
         allOf:
         - $ref: '#/definitions/consts.UserStatus'
@@ -660,6 +690,10 @@ definitions:
       email:
         description: 用户邮箱
         type: string
+      gender:
+        allOf:
+        - $ref: '#/definitions/consts.UserGender'
+        description: 用户性别（0未知，1男，2女）
       id:
         description: 编号
         type: integer
@@ -677,9 +711,6 @@ definitions:
         items:
           type: integer
         type: array
-      sex:
-        description: 用户性别（0未知，1男，2女）
-        type: integer
       status:
         allOf:
         - $ref: '#/definitions/consts.UserStatus'
@@ -696,6 +727,10 @@ definitions:
       email:
         description: 用户邮箱
         type: string
+      gender:
+        allOf:
+        - $ref: '#/definitions/consts.UserGender'
+        description: 用户性别（0未知，1男，2女）
       id:
         description: 编号
         type: integer
@@ -713,9 +748,6 @@ definitions:
         items:
           type: integer
         type: array
-      sex:
-        description: 用户性别（0未知，1男，2女）
-        type: integer
       status:
         description: 帐号状态（0正常 1停用）
         type: integer
@@ -763,6 +795,9 @@ definitions:
     type: object
   dto.UpdatePwdDto:
     properties:
+      newPassword:
+        description: 新密码
+        type: string
       password:
         description: 密码
         type: string
@@ -775,21 +810,26 @@ definitions:
       email:
         description: 用户邮箱
         type: string
+      gender:
+        description: 用户性别（0未知，1男，2女）
+        type: integer
       id:
         description: 编号
         type: integer
       nickName:
         description: 用户昵称
         type: string
+      permission:
+        description: 权限
+        items:
+          type: string
+        type: array
       phone:
         description: 手机号码
         type: string
       remark:
         description: 备注
         type: string
-      sex:
-        description: 用户性别（0未知，1男，2女）
-        type: integer
       status:
         description: 帐号状态（0正常 1停用）
         type: integer
@@ -981,25 +1021,6 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: 获取用户菜单（树状）
-      tags:
-      - 授权
-  /system/auth/permission:
-    get:
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/response.JsonResult'
-            - properties:
-                data:
-                  items:
-                    type: string
-                  type: array
-              type: object
-      security:
-      - ApiKeyAuth: []
-      summary: 获取用户权限
       tags:
       - 授权
   /system/auth/updatePwd:
@@ -1616,30 +1637,6 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: 添加角色
-      tags:
-      - 角色
-  /system/role/authMenu:
-    get:
-      parameters:
-      - description: id编号
-        in: query
-        name: id
-        type: integer
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/response.JsonResult'
-            - properties:
-                data:
-                  items:
-                    type: integer
-                  type: array
-              type: object
-      security:
-      - ApiKeyAuth: []
-      summary: 角色菜单
       tags:
       - 角色
   /system/role/delete:

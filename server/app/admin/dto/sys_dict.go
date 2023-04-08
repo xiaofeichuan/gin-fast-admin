@@ -22,6 +22,7 @@ type SysDictVo struct {
 	CreatedAt time.Time         `json:"createdAt"` //创建时间
 	UpdatedAt time.Time         `json:"updatedAt"` //更新时间
 	Remark    string            `json:"remark"`    //备注
+	Items     []DictItemVo      `json:"items"`     //选项
 }
 
 // SysDictAddDto 添加
@@ -37,4 +38,10 @@ type SysDictAddDto struct {
 type SysDictUpdateDto struct {
 	Id int64 `json:"id"` //编号
 	SysDictAddDto
+}
+
+// DictItemVo 输出对象
+type DictItemVo struct {
+	DictItemName  string      `json:"dictItemName"`  //选项名称
+	DictItemValue interface{} `json:"dictItemValue"` //选项值
 }

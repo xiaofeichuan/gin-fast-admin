@@ -1,11 +1,14 @@
 package service
 
 import (
+	"go-fast-admin/server/app/admin/consts"
 	"go-fast-admin/server/app/admin/dto"
 	"go-fast-admin/server/app/admin/model"
+	"go-fast-admin/server/common/tools"
 	utils2 "go-fast-admin/server/common/utils"
 	"go-fast-admin/server/global"
 	"gopkg.in/errgo.v2/fmt/errors"
+	"strconv"
 )
 
 type SysUserService struct{}
@@ -57,7 +60,7 @@ func (s *SysUserService) Add(addDto dto.SysUserAddDto) error {
 		Email:    addDto.Email,
 		Phone:    addDto.Phone,
 		Password: pwd,
-		Sex:      addDto.Sex,
+		Gender:   addDto.Gender,
 		Status:   addDto.Status,
 		Remark:   addDto.Remark,
 	}
@@ -76,7 +79,7 @@ func (s *SysUserService) Update(updateDto dto.SysUserUpdateDto) error {
 		"user_type": 0,
 		"email":     updateDto.Email,
 		"phone":     updateDto.Phone,
-		"sex":       updateDto.Sex,
+		"gender":    updateDto.Gender,
 		"status":    updateDto.Status,
 		"remark":    updateDto.Remark,
 	}).Error
@@ -124,7 +127,10 @@ func (s *SysUserService) ResetPwd(reqDto dto.ResetPwdDto) error {
 	pwd := utils2.Md5(reqDto.Password + salt)
 
 	//更新密码
-	err := global.DB.Model(&model.SysUser{}).Where("id = ?", reqDto.UserId).Update("password", pwd).Error
+	err := global.DB.Model(&model.SysUser{}).Where("id = ?", reqDto.UserId).Updates(map[string]interface{}{
+		"salt":     salt,
+		"password": pwd,
+	}).Error
 	return err
 }
 
@@ -147,6 +153,12 @@ func SetUserRole(userId int64, roleIds []int64) error {
 		userRoles = append(userRoles, userRole)
 	}
 	err = global.DB.Create(userRoles).Error
+
+	//删除缓存
+	userIdStr := strconv.FormatInt(userId, 10)
+	tools.Redis.Del(consts.CacheKeySysUserMenu + userIdStr)
+	tools.Redis.Del(consts.CacheKeySysUserPermission + userIdStr)
+
 	return err
 
 }

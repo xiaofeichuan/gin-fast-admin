@@ -4,6 +4,7 @@ import (
 	"go-fast-admin/server/app/admin/consts"
 	"go-fast-admin/server/app/admin/dto"
 	"go-fast-admin/server/app/admin/model"
+	"go-fast-admin/server/common/tools"
 	"go-fast-admin/server/global"
 	"gopkg.in/errgo.v2/fmt/errors"
 )
@@ -62,16 +63,20 @@ func (s *SysMenuService) Add(addDto dto.SysMenuAddDto) error {
 		Remark:        addDto.Remark,
 	}
 	err := global.DB.Create(menu).Error
+
+	//删除缓存
+	tools.Redis.DelByPattern(consts.CacheKeySysUserMenu)
+	tools.Redis.DelByPattern(consts.CacheKeySysUserPermission)
 	return err
 }
 
 // Update 更新角色
 func (s *SysMenuService) Update(updateDto dto.SysMenuUpdateDto) error {
-	if updateDto.Path == "" {
-		return errors.New("路由地址不允许为空")
-	}
 
 	if updateDto.MenuType == consts.MenuTypeMenu {
+		if updateDto.Path == "" {
+			return errors.New("路由地址不允许为空")
+		}
 		var menu = model.SysMenu{}
 		global.DB.Where("id != ? AND path = ?", updateDto.Id, updateDto.Path).First(&menu)
 		if menu.Id != 0 {
@@ -97,12 +102,20 @@ func (s *SysMenuService) Update(updateDto dto.SysMenuUpdateDto) error {
 		"sort":           updateDto.Sort,
 		"remark":         updateDto.Remark,
 	}).Error
+
+	//删除缓存
+	tools.Redis.DelByPattern(consts.CacheKeySysUserMenu)
+	tools.Redis.DelByPattern(consts.CacheKeySysUserPermission)
 	return err
 }
 
 // Delete 删除角色
 func (s *SysMenuService) Delete(id int64) error {
 	err := global.DB.Delete(&model.SysMenu{}, "id = ?", id).Error
+
+	//删除缓存
+	tools.Redis.DelByPattern(consts.CacheKeySysUserMenu)
+	tools.Redis.DelByPattern(consts.CacheKeySysUserPermission)
 	return err
 }
 

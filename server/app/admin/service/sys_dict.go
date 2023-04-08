@@ -1,9 +1,11 @@
 package service
 
 import (
+	"go-fast-admin/server/app/admin/consts"
 	"go-fast-admin/server/app/admin/dto"
 	"go-fast-admin/server/app/admin/model"
 	"go-fast-admin/server/global"
+	"strconv"
 )
 
 type SysDictService struct{}
@@ -61,12 +63,39 @@ func (s *SysDictService) Delete(id int64) error {
 
 // Detail 获取字典详情
 func (s *SysDictService) Detail(id int64) (obj dto.SysDictVo, err error) {
-	err = global.DB.Model(&model.SysDict{}).Where("id = ?", id).Scan(&obj).Error
+	err = global.DB.Model(&model.SysDict{}).Where("id = ?", id).Find(&obj).Error
 	return obj, err
 }
 
 // List 字典列表
 func (s *SysDictService) List() (objs []dto.SysDictVo, err error) {
-	err = global.DB.Model(&model.SysDict{}).Scan(&objs).Error
+	err = global.DB.Model(&model.SysDict{}).Where("status = ?", consts.DictStatusEnable).Find(&objs).Error
+	var dictItems []dto.SysDictItemVo
+	err = global.DB.Model(&model.SysDictItem{}).Where("status = ?", consts.DictItemStatusEnable).Find(&dictItems).Error
+
+	for i := 0; i < len(objs); i++ {
+
+		for _, dictItem := range dictItems {
+			if objs[i].Id == dictItem.DictId {
+
+				if objs[i].DictType == consts.DictTypeInt {
+					//数字
+					num, _ := strconv.Atoi(dictItem.DictItemValue)
+					objs[i].Items = append(objs[i].Items, dto.DictItemVo{
+						DictItemName:  dictItem.DictItemName,
+						DictItemValue: num,
+					})
+				} else {
+					//字符串
+					objs[i].Items = append(objs[i].Items, dto.DictItemVo{
+						DictItemName:  dictItem.DictItemName,
+						DictItemValue: dictItem.DictItemValue,
+					})
+
+				}
+
+			}
+		}
+	}
 	return objs, err
 }

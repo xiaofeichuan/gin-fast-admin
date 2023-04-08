@@ -220,42 +220,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/system/auth/permission": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "tags": [
-                    "授权"
-                ],
-                "summary": "获取用户权限",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.JsonResult"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "string"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
         "/system/auth/updatePwd": {
             "post": {
                 "security": [
@@ -1356,50 +1320,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/system/role/authMenu": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "tags": [
-                    "角色"
-                ],
-                "summary": "角色菜单",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "id编号",
-                        "name": "id",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.JsonResult"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "integer"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
         "/system/role/delete": {
             "post": {
                 "security": [
@@ -2014,12 +1934,15 @@ const docTemplate = `{
         "consts.MenuType": {
             "type": "integer",
             "enum": [
-                0
+                0,
+                1
             ],
             "x-enum-comments": {
+                "MenuTypeCatalog": "目录",
                 "MenuTypeMenu": "菜单"
             },
             "x-enum-varnames": [
+                "MenuTypeCatalog",
                 "MenuTypeMenu"
             ]
         },
@@ -2033,6 +1956,18 @@ const docTemplate = `{
             },
             "x-enum-varnames": [
                 "RoleStatusEnable"
+            ]
+        },
+        "consts.UserGender": {
+            "type": "integer",
+            "enum": [
+                0
+            ],
+            "x-enum-comments": {
+                "UserGenderNone": "未知"
+            },
+            "x-enum-varnames": [
+                "UserGenderNone"
             ]
         },
         "consts.UserStatus": {
@@ -2099,6 +2034,18 @@ const docTemplate = `{
                 },
                 "captchaId": {
                     "type": "string"
+                }
+            }
+        },
+        "dto.DictItemVo": {
+            "type": "object",
+            "properties": {
+                "dictItemName": {
+                    "description": "选项名称",
+                    "type": "string"
+                },
+                "dictItemValue": {
+                    "description": "选项值"
                 }
             }
         },
@@ -2489,6 +2436,13 @@ const docTemplate = `{
                     "description": "编号",
                     "type": "integer"
                 },
+                "items": {
+                    "description": "选项",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.DictItemVo"
+                    }
+                },
                 "remark": {
                     "description": "备注",
                     "type": "string"
@@ -2848,6 +2802,13 @@ const docTemplate = `{
                     "description": "编号",
                     "type": "integer"
                 },
+                "menuIds": {
+                    "description": "角色菜单",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
                 "remark": {
                     "description": "备注",
                     "type": "string"
@@ -2885,6 +2846,14 @@ const docTemplate = `{
                     "description": "用户邮箱",
                     "type": "string"
                 },
+                "gender": {
+                    "description": "用户性别（0未知，1男，2女）",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/consts.UserGender"
+                        }
+                    ]
+                },
                 "nickName": {
                     "description": "用户昵称",
                     "type": "string"
@@ -2908,10 +2877,6 @@ const docTemplate = `{
                         "type": "integer"
                     }
                 },
-                "sex": {
-                    "description": "用户性别（0未知，1男，2女）",
-                    "type": "integer"
-                },
                 "status": {
                     "description": "帐号状态（0正常 1停用）",
                     "allOf": [
@@ -2932,6 +2897,14 @@ const docTemplate = `{
                 "email": {
                     "description": "用户邮箱",
                     "type": "string"
+                },
+                "gender": {
+                    "description": "用户性别（0未知，1男，2女）",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/consts.UserGender"
+                        }
+                    ]
                 },
                 "id": {
                     "description": "编号",
@@ -2955,10 +2928,6 @@ const docTemplate = `{
                     "items": {
                         "type": "integer"
                     }
-                },
-                "sex": {
-                    "description": "用户性别（0未知，1男，2女）",
-                    "type": "integer"
                 },
                 "status": {
                     "description": "帐号状态（0正常 1停用）",
@@ -2985,6 +2954,14 @@ const docTemplate = `{
                     "description": "用户邮箱",
                     "type": "string"
                 },
+                "gender": {
+                    "description": "用户性别（0未知，1男，2女）",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/consts.UserGender"
+                        }
+                    ]
+                },
                 "id": {
                     "description": "编号",
                     "type": "integer"
@@ -3007,10 +2984,6 @@ const docTemplate = `{
                     "items": {
                         "type": "integer"
                     }
-                },
-                "sex": {
-                    "description": "用户性别（0未知，1男，2女）",
-                    "type": "integer"
                 },
                 "status": {
                     "description": "帐号状态（0正常 1停用）",
@@ -3077,6 +3050,10 @@ const docTemplate = `{
         "dto.UpdatePwdDto": {
             "type": "object",
             "properties": {
+                "newPassword": {
+                    "description": "新密码",
+                    "type": "string"
+                },
                 "password": {
                     "description": "密码",
                     "type": "string"
@@ -3094,6 +3071,10 @@ const docTemplate = `{
                     "description": "用户邮箱",
                     "type": "string"
                 },
+                "gender": {
+                    "description": "用户性别（0未知，1男，2女）",
+                    "type": "integer"
+                },
                 "id": {
                     "description": "编号",
                     "type": "integer"
@@ -3102,6 +3083,13 @@ const docTemplate = `{
                     "description": "用户昵称",
                     "type": "string"
                 },
+                "permission": {
+                    "description": "权限",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "phone": {
                     "description": "手机号码",
                     "type": "string"
@@ -3109,10 +3097,6 @@ const docTemplate = `{
                 "remark": {
                     "description": "备注",
                     "type": "string"
-                },
-                "sex": {
-                    "description": "用户性别（0未知，1男，2女）",
-                    "type": "integer"
                 },
                 "status": {
                     "description": "帐号状态（0正常 1停用）",

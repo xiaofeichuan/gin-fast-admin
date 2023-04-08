@@ -24,7 +24,7 @@ func JwtAuth() gin.HandlerFunc {
 		// 解析token
 		token, err := utils.ParseToken(tokenStr)
 		if err != nil {
-			response.FailWithCode(http.StatusUnauthorized, "无权限访问，错误token", context)
+			response.FailWithCode(http.StatusUnauthorized, err.Error(), context)
 			context.Abort() //结束后续操作
 			return
 		}
@@ -33,7 +33,7 @@ func JwtAuth() gin.HandlerFunc {
 		// 获取 token 中的 claims
 		claims, ok := token.Claims.(*utils.UserAuthClaims)
 		if !ok {
-			context.JSON(http.StatusForbidden, "无权限访问，错误token")
+			context.JSON(http.StatusUnauthorized, "无权限访问，错误token")
 			context.Abort()
 			return
 		}

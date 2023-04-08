@@ -59,6 +59,7 @@ func (s *SysAuthService) Login(loginDto dto.LoginDto) (token string, err error) 
 		NickName: user.NickName,
 		UserType: user.UserType,
 	}
+
 	token, err = utils2.GenerateToken(claims, time.Now().AddDate(0, 0, 1))
 	return token, err
 }
@@ -73,7 +74,45 @@ func (s *SysAuthService) GetUserInfo(c *gin.Context) (userInfo dto.UserInfoVo, e
 		return userInfo, err
 	}
 
+	//是否超级管理员
+	if utils2.IsSuperAdmin(c) {
+		//所有权限
+		userInfo.Permission = []string{"*_*_*"}
+	} else {
+		//用户权限
+		userPermissions := GetUserPermission(currentUserId)
+		for i := 0; i < len(userPermissions); i++ {
+			userInfo.Permission = append(userInfo.Permission, userPermissions[i].Permission)
+		}
+	}
 	return userInfo, err
+}
+
+// GetUserPermission 获取用户权限
+func GetUserPermission(userId int64) (permissions []dto.UserPermissionVo) {
+
+	var cacheKey = consts.CacheKeySysUserPermission + strconv.FormatInt(userId, 10)
+
+	tools.Redis.Get(cacheKey, &permissions)
+	if permissions == nil || len(permissions) == 0 {
+
+		var menuIds []int64
+
+		//用户拥有菜单id
+		global.DB.Table("sys_user_role userRole").Select("roleMenu.menu_id").
+			Joins("LEFT JOIN sys_role_menu roleMenu ON userRole.role_id = roleMenu.role_id").
+			Where("userRole.user_id = ?", userId).
+			Group("roleMenu.menu_id").Find(&menuIds)
+
+		global.DB.Model(&model.SysMenu{}).
+			Select("permission", "request_method").
+			Where("id IN ? AND menu_type = ? AND status = ? ", menuIds, consts.MenuTypeBtn, consts.MenuStatusEnable).
+			Scan(&permissions)
+
+		//设置缓存
+		tools.Redis.Set(cacheKey, permissions, consts.CacheTime)
+	}
+	return permissions
 }
 
 // GetAuthMenu 获取用户菜单路由
@@ -81,9 +120,9 @@ func (s *SysAuthService) GetAuthMenu(c *gin.Context) (authMenu []dto.AuthMenuVo,
 
 	var currentUserId = utils2.GetUserId(c)
 
-	var cacheKey = consts.CacheKeyUserMenu + strconv.FormatInt(currentUserId, 10)
+	var cacheKey = consts.CacheKeySysUserMenu + strconv.FormatInt(currentUserId, 10)
 
-	tools.Redis.Get(cacheKey, authMenu)
+	tools.Redis.Get(cacheKey, &authMenu)
 
 	if authMenu == nil || len(authMenu) == 0 {
 		var menuList []model.SysMenu
@@ -94,20 +133,14 @@ func (s *SysAuthService) GetAuthMenu(c *gin.Context) (authMenu []dto.AuthMenuVo,
 				consts.MenuTypeMenu,
 				consts.MenuStatusEnable).Scan(&menuList)
 		} else {
+
 			var menuIds []int64
 			var userId = utils2.GetUserId(c)
-			var sql = `
-			SELECT
-				roleMenu.menu_id 
-			FROM
-				sys_user_role userRole
-				LEFT JOIN sys_role_menu roleMenu ON userRole.role_id = roleMenu.role_id 
-			WHERE
-				userRole.user_id = ? 
-			GROUP BY
-				roleMenu.menu_id`
 			//用户拥有菜单id
-			global.DB.Raw(sql, userId).Scan(&menuIds)
+			global.DB.Table("sys_user_role userRole").Select("roleMenu.menu_id").
+				Joins("LEFT JOIN sys_role_menu roleMenu ON userRole.role_id = roleMenu.role_id").
+				Where("userRole.user_id = ?", userId).
+				Group("roleMenu.menu_id").Find(&menuIds)
 
 			global.DB.Model(&model.SysMenu{}).Where("id IN ? AND menu_type = ? AND status = ? ",
 				menuIds,
@@ -123,83 +156,29 @@ func (s *SysAuthService) GetAuthMenu(c *gin.Context) (authMenu []dto.AuthMenuVo,
 	return authMenu, err
 }
 
-// GetAuthPermission 获取用户权限
-func (s *SysAuthService) GetAuthPermission(c *gin.Context) (permissions []string, err error) {
-	//是否超级管理员
-	if utils2.IsSuperAdmin(c) {
-		//所有权限
-		return []string{"*:*:*"}, nil
-	} else {
-
-		userPermissions := GetPermissionList(c)
-		for i := 0; i < len(userPermissions); i++ {
-			permissions = append(permissions, userPermissions[i].Permission)
-		}
-		return permissions, err
-	}
-}
-
-func GetPermissionList(c *gin.Context) (permissions []dto.UserPermissionVo) {
-
-	var currentUserId = utils2.GetUserId(c)
-	var cacheKey = consts.CacheKeyUserPermission + strconv.FormatInt(currentUserId, 10)
-
-	tools.Redis.Get(cacheKey, permissions)
-	if permissions == nil || len(permissions) == 0 {
-
-		var menuIds []int64
-		var sql = `
-		SELECT
-			roleMenu.menu_id 
-		FROM
-			sys_user_role userRole
-			LEFT JOIN sys_role_menu roleMenu ON userRole.role_id = roleMenu.role_id 
-		WHERE
-			userRole.user_id = ? 
-		GROUP BY
-			roleMenu.menu_id`
-		//用户拥有菜单id
-		global.DB.Raw(sql, currentUserId).Scan(&menuIds)
-
-		global.DB.Model(&model.SysMenu{}).
-			Select("permission", "request_method").
-			Where("id IN ? AND menu_type = ? AND status = ? ", menuIds, consts.MenuTypeBtn, consts.MenuStatusEnable).
-			Scan(&permissions)
-
-		//设置缓存
-		tools.Redis.Set(cacheKey, permissions, consts.CacheTime)
-	}
-	return permissions
-}
-
 // BuildAuthMenuTree 构建菜单树状
 func BuildAuthMenuTree(menuList []model.SysMenu, parentId int64) (menus []dto.AuthMenuVo) {
 
-	var childMenuList []model.SysMenu
+	var menuRouters []dto.AuthMenuVo
 	for i := 0; i < len(menuList); i++ {
 		var menu = menuList[i]
 		if menu.ParentId == parentId {
-			childMenuList = append(childMenuList, menu)
+			var menuRouter dto.AuthMenuVo
+			menuRouter.Path = "/" + menu.Path
+			menuRouter.Name = menu.Path
+			menuRouter.Component = menu.Component
+			menuRouter.Meta = dto.MenuRouterMetaVo{
+				Title:       menu.MenuName,
+				Icon:        menu.Icon,
+				IsLink:      menu.Link,
+				IsIframe:    menu.IsIframe,
+				IsHide:      menu.IsHide,
+				IsKeepAlive: menu.IsCache,
+				IsAffix:     menu.IsAffix,
+			}
+			menuRouter.Children = BuildAuthMenuTree(menuList, menu.Id)
+			menuRouters = append(menuRouters, menuRouter)
 		}
-	}
-
-	var menuRouters []dto.AuthMenuVo
-	for i := 0; i < len(childMenuList); i++ {
-		var menuRouter dto.AuthMenuVo
-		menuRouter.Path = "/" + childMenuList[i].Path
-		menuRouter.Name = childMenuList[i].Path
-		menuRouter.Component = childMenuList[i].Component
-		menuRouter.Meta = dto.MenuRouterMetaVo{
-			Title:       childMenuList[i].MenuName,
-			Icon:        childMenuList[i].Icon,
-			IsLink:      childMenuList[i].Link,
-			IsIframe:    childMenuList[i].IsIframe,
-			IsHide:      childMenuList[i].IsHide,
-			IsKeepAlive: childMenuList[i].IsCache,
-			IsAffix:     false,
-		}
-		menuRouter.Children = BuildAuthMenuTree(menuList, childMenuList[i].Id)
-		menuRouters = append(menuRouters, menuRouter)
 	}
 	return menuRouters
 }
@@ -221,9 +200,12 @@ func (s *SysAuthService) UpdatePwd(c *gin.Context, updatePwdDto dto.UpdatePwdDto
 	salt := utils2.GetRoundNumber(15)
 
 	//加密 => MD5（密码+密码盐）
-	pwd := utils2.Md5(updatePwdDto.Password + salt)
+	pwd := utils2.Md5(updatePwdDto.NewPassword + salt)
 
 	//更新密码
-	err = global.DB.Model(&model.SysUser{}).Where("id = ?", user.Id).Update("password", pwd).Error
+	err = global.DB.Model(&model.SysUser{}).Where("id = ?", user.Id).Updates(map[string]interface{}{
+		"salt":     salt,
+		"password": pwd,
+	}).Error
 	return err
 }
