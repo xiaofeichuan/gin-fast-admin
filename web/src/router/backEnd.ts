@@ -39,13 +39,8 @@ export async function initBackEndControlRoutes() {
 	if (!cache.getToken()) {
 		return false;
 	}
-try {
 	// 用户信息
 	await useUserInfo().setUserInfos();	
-	
-} catch (error) {
-	return false;
-}
 	
 	// 字典信息
 	await useDictData().setDictData();	
