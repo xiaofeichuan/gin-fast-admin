@@ -1,14 +1,12 @@
-# gin-fast-admin
+<div align=center>
+	<img src="web/src/assets/logo-mini.svg" width="150" height="150" />
+    <div style="display: flex;flex-direction: column;color: #EA5B5A;">
+    	<span style="font-size: 28px;">GoFastAdmin</span>
+        <span>基于Go+Vue开发的权限管理系统</span>
+    </div>
+</div>
 
-
-
-Logo
-
-#口号：快速搭建权限管理系统、口号：快速、敏捷、免费、开源
-
-
-
-##  🌈 项目简介
+##  👻项目简介
 - 后端采用Go、Gin、Gorm、Mysql、Redis
 - 前端采用Vue3、TypeScript、Element Plus、vite、pinia
 - 权限认证使用Jwt，可通过角色控制菜单、按钮权限
@@ -17,7 +15,7 @@ Logo
 ## ⛱️在线体验
 敬请期待
 
-##  ⚡项目启动
+##  🛸项目启动
 ```bash
 # 进入服务端
 cd server
@@ -43,7 +41,7 @@ cnpm run build
 ```
 
 
-##  📚功能介绍
+##  🎨功能介绍
 
 - 👉  用户管理：系统用户的维护，分配角色、重置密码等。
 - 👉  菜单管理：动态维护菜单，包括目录、菜单、按钮。
@@ -58,17 +56,13 @@ cnpm run build
 * Vue3 https://cn.vuejs.org/
 * Element Plus https://element-plus.gitee.io/zh-CN/
 
-😎通过以上文档，你可以玩转本项目，如有问题可从文档中寻找解决办法。
+通过以上文档，你可以玩转本项目😎，如有问题可从文档中寻找解决办法。
 
-## 💐 特别鸣谢
+## 💐特别鸣谢
 
 - 👉 vue-next-admin：https://gitee.com/lyt-top/vue-next-admin
 
-##  🌈演示图片
-
-
-
-##  💌 支持一下
+##  💌支持一下
 
 如果觉得框架不错，或者已经在使用了，希望你可以去 [Github](https://github.com/xiaofeichuan/go-fast-admin) 或者 [Gitee](https://gitee.com/xiaofeichuan/go-fast-admin) 帮我点个 ⭐ Star，这将是对我极大的鼓励与支持。
 

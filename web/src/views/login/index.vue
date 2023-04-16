@@ -98,14 +98,13 @@ onMounted(() => {
 			.login-left-logo-text {
 				display: flex;
 				flex-direction: column;
+				color: #EA5B5A;
 				span {
 					margin-left: 10px;
 					font-size: 28px;
-					color: #26a59a;
 				}
 				.login-left-logo-text-msg {
 					font-size: 12px;
-					color: #32a99e;
 				}
 			}
 		}
