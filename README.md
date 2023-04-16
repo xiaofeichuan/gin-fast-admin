@@ -1,10 +1,12 @@
 <div align=center>
 	<img src="web/src/assets/logo-mini.svg" width="150" height="150" />
-    <div style="display: flex;flex-direction: column;color: #EA5B5A;">
-    	<span style="font-size: 28px;">GoFastAdmin</span>
-        <span>基于Go+Vue开发的权限管理系统</span>
-    </div>
+    <br/>
+    <font size="8" color="#EA5B5A">GoFastAdmin</font>
+    <br/>
+    <span>基于Go+Vue开发的权限管理系统</span>
 </div>
+
+
 
 ##  👻项目简介
 - 后端采用Go、Gin、Gorm、Mysql、Redis
