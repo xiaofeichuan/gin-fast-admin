@@ -124,14 +124,16 @@ func (s *SysAuthService) GetAuthMenu(c *gin.Context) (authMenu []dto.AuthMenuVo,
 
 	tools.Redis.Get(cacheKey, &authMenu)
 
+	var menuTypes = []consts.MenuType{consts.MenuTypeCatalog, consts.MenuTypeMenu}
+
 	if authMenu == nil || len(authMenu) == 0 {
 		var menuList []model.SysMenu
 		//是否超级管理员
 		if utils2.IsSuperAdmin(c) {
 			//超级管理员，拥有最高权限
-			global.DB.Model(&model.SysMenu{}).Where("menu_type = ? AND status = ? ",
-				consts.MenuTypeMenu,
-				consts.MenuStatusEnable).Scan(&menuList)
+			global.DB.Model(&model.SysMenu{}).Where("menu_type IN ? AND status = ? ",
+				menuTypes,
+				consts.MenuStatusEnable).Order("sort,id ASC").Scan(&menuList)
 		} else {
 
 			var menuIds []int64
@@ -142,10 +144,10 @@ func (s *SysAuthService) GetAuthMenu(c *gin.Context) (authMenu []dto.AuthMenuVo,
 				Where("userRole.user_id = ?", userId).
 				Group("roleMenu.menu_id").Find(&menuIds)
 
-			global.DB.Model(&model.SysMenu{}).Where("id IN ? AND menu_type = ? AND status = ? ",
+			global.DB.Model(&model.SysMenu{}).Where("id IN ? AND menu_type IN ? AND status = ? ",
 				menuIds,
-				consts.MenuTypeMenu,
-				consts.MenuStatusEnable).Scan(&menuList)
+				menuTypes,
+				consts.MenuStatusEnable).Order("sort,id ASC").Scan(&menuList)
 		}
 		authMenu = BuildAuthMenuTree(menuList, 0)
 

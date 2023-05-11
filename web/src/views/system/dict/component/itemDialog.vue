@@ -1,5 +1,5 @@
 <template>
-	<el-dialog title="字典选项" v-model="state.dialog.isShowDialog" width="800px" @close="closeDialog">
+	<el-dialog :title="state.dialog.title" v-model="state.dialog.isShowDialog" width="1100px" @close="closeDialog">
 		<el-card shadow="hover">
 			<div>
 				<el-button type="primary" @click="openEditDialog()" v-permission="['system_dictItem_add']" plain>
@@ -51,12 +51,14 @@ const state = reactive({
 	},
 	dialog: {
 		isShowDialog: false,
+		title: '',
 	},
 });
 
 // 打开弹窗
-const openDialog = (row: any) => {
+const openDialog = (row?: any) => {
 	state.dictData = row;
+	state.dialog.title = '字典选项';
 	handleQuery();
 	state.dialog.isShowDialog = true;
 };
@@ -75,7 +77,7 @@ const closeDialog = () => {
 	state.dialog.isShowDialog = false;
 };
 // 打开编辑弹窗
-const openEditDialog = (row: any) => {
+const openEditDialog = (row?: any) => {
 	editFormRef.value.openDialog(state.dictData, row);
 };
 

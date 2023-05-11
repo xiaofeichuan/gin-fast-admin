@@ -62,7 +62,7 @@
 					<template #default="scope">
 						<el-button text type="primary" @click="openEditDialog(scope.row)" v-permission="['system_user_update']">修改</el-button>
 						<el-button text type="primary" @click="handleDel(scope.row)" v-permission="['system_user_delete']">删除</el-button>
-						<el-dropdown @command="(command) => handleCommand(command, scope.row)" v-permission="['system_user_resetPwd']">
+						<el-dropdown @command="(command:any) => handleCommand(command, scope.row)" v-permission="['system_user_resetPwd']">
 							<el-button text icon="ele-MoreFilled" size="small" type="primary" class="ml10 mt4" />
 							<template #dropdown>
 								<el-dropdown-menu>
@@ -164,7 +164,7 @@ const handleSetStatus = (row: any) => {
 };
 
 // 打开编辑弹窗
-const openEditDialog = (row: any) => {
+const openEditDialog = (row?: any) => {
 	editFormRef.value.openDialog(row);
 };
 

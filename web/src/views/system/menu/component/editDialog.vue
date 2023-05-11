@@ -4,13 +4,9 @@
 			<el-row :gutter="35">
 				<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="mb20">
 					<el-form-item label="上级菜单" prop="parentId">
-						<el-cascader
-							:options="state.menuOptions"
-							v-model="state.dataForm.parentId"
-							:props="{ checkStrictly: true, emitPath: false }"
-							class="w100"
-							clearable
-						/>
+						<!-- <el-cascader :options="state.menuOptions" v-model="state.dataForm.parentId"
+							:props="{ checkStrictly: true, emitPath: false }" class="w100" clearable /> -->
+						<el-tree-select v-model="state.dataForm.parentId" :data="state.menuOptions"  class="w100" :check-strictly="true"/>
 					</el-form-item>
 				</el-col>
 				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
@@ -19,20 +15,15 @@
 							<!-- <el-radio :label="0">目录</el-radio>
 							<el-radio :label="1">菜单</el-radio>
 							<el-radio :label="2">按钮</el-radio> -->
-							<el-radio v-for="item in state.menuTypeOption" :key="item.dictItemValue" :label="item.dictItemValue">{{ item.dictItemName }}</el-radio>
+							<el-radio v-for="item in state.menuTypeOption" :key="item.dictItemValue"
+								:label="item.dictItemValue">{{ item.dictItemName }}</el-radio>
 						</el-radio-group>
 					</el-form-item>
 				</el-col>
 				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
 					<el-form-item label="菜单状态" prop="status">
-						<el-switch
-							v-model="state.dataForm.status"
-							:active-value="0"
-							:inactive-value="1"
-							inline-prompt
-							active-text="启用"
-							inactive-text="禁用"
-						></el-switch>
+						<el-switch v-model="state.dataForm.status" :active-value="0" :inactive-value="1" inline-prompt
+							active-text="启用" inactive-text="禁用"></el-switch>
 					</el-form-item>
 				</el-col>
 				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
@@ -42,7 +33,8 @@
 				</el-col>
 				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
 					<el-form-item label="菜单排序" prop="sort">
-						<el-input-number v-model="state.dataForm.sort" controls-position="right" placeholder="请输入排序" class="w100" />
+						<el-input-number v-model="state.dataForm.sort" controls-position="right" placeholder="请输入排序"
+							class="w100" />
 					</el-form-item>
 				</el-col>
 				<template v-if="state.dataForm.menuType === 0 || state.dataForm.menuType === 1">
@@ -51,21 +43,16 @@
 							<IconSelector placeholder="请选择菜单图标" v-model="state.dataForm.icon" />
 						</el-form-item>
 					</el-col>
+					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
+						<el-form-item label="路由地址" prop="path">
+							<el-input v-model="state.dataForm.path" placeholder="请输入路由地址" clearable></el-input>
+						</el-form-item>
+					</el-col>
 					<template v-if="state.dataForm.menuType === 1">
 						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
-							<el-form-item label="路由地址" prop="path">
-								<el-input v-model="state.dataForm.path" placeholder="请输入路由地址" clearable></el-input>
-							</el-form-item>
-						</el-col>
-
-						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
 							<el-form-item label="链接地址" prop="isLink">
-								<el-input
-									v-model="state.dataForm.link"
-									placeholder="请输入链接地址（如：http:baidu.com）"
-									clearable
-									:disabled="!state.dataForm.isLink"
-								>
+								<el-input v-model="state.dataForm.link" placeholder="请输入链接地址（如：http:baidu.com）" clearable
+									:disabled="!state.dataForm.isLink">
 								</el-input>
 							</el-form-item>
 						</el-col>
@@ -164,7 +151,7 @@ const state = reactive({
 	dataForm: {
 		parentId: 0, // 上级菜单
 		menuName: '', // 菜单名称
-		menuType: 0, // 菜单类型（0菜单，1按钮）
+		menuType: 0, // 菜单类型（0目录，1菜单，2按钮）
 		path: '', // 路由地址
 		link: '', // 外部地址
 		isLink: false, // 是否外链，
@@ -193,7 +180,7 @@ const state = reactive({
 		isEdit: false,
 		title: '',
 	},
-	menuTypeOption:[]
+	menuTypeOption: Array()
 });
 
 // 获取路由
@@ -211,7 +198,7 @@ const getMenuData = () => {
 	});
 };
 
-//
+// 构建菜单选项
 const buildMenuOptions = (list: any, parentId: number): any => {
 	var data = [];
 	var children = list.filter((item: any) => item.parentId == parentId);

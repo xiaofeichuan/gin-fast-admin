@@ -88,7 +88,7 @@ const handleQuery = () => {
 	});
 };
 // 打开新增菜单弹窗
-const openEditDialog = (row: any) => {
+const openEditDialog = (row?: any) => {
 	editFormRef.value.openDialog(row);
 };
 

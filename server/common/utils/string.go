@@ -6,10 +6,10 @@ import (
 	"time"
 )
 
-// ToPascalCase
-// 蛇形命名法=>帕斯卡命名法
+// SnakeToUpperCamelCase
+// 蛇形命名法=>大驼峰式命名法
 // 例如：user_name->UserName
-func ToPascalCase(snakeCase string) string {
+func SnakeToUpperCamelCase(snakeCase string) string {
 	var result string
 	nameList := strings.Split(snakeCase, "_")
 	for i := 0; i < len(nameList); i++ {
@@ -23,10 +23,10 @@ func ToPascalCase(snakeCase string) string {
 	return result
 }
 
-// ToCamelCase
-// 蛇形命名法=>驼峰式命名法
+// SnakeToLowerCamelCase
+// 蛇形命名法=>小驼峰式命名法
 // 例如：user_name->userName
-func ToCamelCase(snakeCase string) string {
+func SnakeToLowerCamelCase(snakeCase string) string {
 	var result string
 	nameList := strings.Split(snakeCase, "_")
 	for i := 0; i < len(nameList); i++ {
@@ -46,28 +46,40 @@ func ToCamelCase(snakeCase string) string {
 }
 
 // GetGoType 获取go的数据类型
-// mysql数据类型=>go数据类型
-func GetGoType(columnName string, columnType string) string {
-	if strings.Contains(columnType, "int") {
-		if columnName == "id" || strings.Contains(columnType, "_id") {
-			return "int64"
-		}
-		//判断是不是bool
-		var isStr = string([]byte(columnName)[:3])
-		if columnName == isStr {
-			return "bool"
-		}
-		return "int"
-	} else if strings.Contains(columnType, "datetime") {
-		return "time.Time"
-	} else if strings.Contains(columnType, "char") {
+// mysql/pgsql数据类型=>go数据类型
+func GetGoType(columnType string) string {
+	switch columnType {
+	case "text":
+	case "varchar":
+	case "char":
+	case "longtext":
 		return "string"
-	} else if strings.Contains(columnType, "decimal") {
-		//需要扩展
+
+	case "tinyint":
+	case "int":
+	case "int2":
+	case "int4":
+		return "int"
+
+	case "bigint":
+	case "int8":
+		return "int"
+
+	case "bool":
+		return "bool"
+
+	case "date":
+	case "datetime":
+	case "smalldatetime":
+	case "timestamp":
+		return "time.Time"
+
+	case "money":
+	case "numeric":
+	case "decimal":
 		return "decimal.Decimal"
-	} else {
-		return columnType
 	}
+	return columnType
 }
 
 // GetRoundNumber 获取随机数

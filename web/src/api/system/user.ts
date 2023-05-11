@@ -17,7 +17,7 @@ class UserApi {
 		});
 	}
 	/**
-	 * 用户新增
+	 * 新增用户
 	 * @param parameter 
 	 * @returns 
 	 */
@@ -29,7 +29,7 @@ class UserApi {
 		});
 	}
 	/**
-	 * 用户新增
+	 * 更新用户
 	 * @param parameter 
 	 * @returns 
 	 */
@@ -41,7 +41,7 @@ class UserApi {
 		});
 	}
 	/**
-	 * 用户删除
+	 * 删除用户
 	 * @param parameter 
 	 * @returns 
 	 */
@@ -53,7 +53,7 @@ class UserApi {
 		});
 	}
 	/**
-	 * 用户删除
+	 * 用户详情
 	 * @param parameter 
 	 * @returns 
 	 */

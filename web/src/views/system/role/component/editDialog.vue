@@ -1,5 +1,5 @@
 <template>
-	<el-dialog :title="state.dialog.title" v-model="state.dialog.isShowDialog" width="750px" @close="closeDialog" class="system-role-dialog-container">
+	<el-dialog :title="state.dialog.title" v-model="state.dialog.isShowDialog" width="750px" @close="closeDialog">
 		<el-form ref="dataFormRef" :model="state.dataForm" :rules="state.rules" size="default" label-width="90px">
 			<el-row :gutter="35">
 				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
@@ -14,29 +14,26 @@
 				</el-col>
 				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
 					<el-form-item label="排序" prop="sort">
-						<el-input-number v-model="state.dataForm.sort" :min="0" :max="999" controls-position="right" placeholder="请输入排序" class="w100" />
+						<el-input-number v-model="state.dataForm.sort" :min="0" :max="999" controls-position="right"
+							placeholder="请输入排序" class="w100" />
 					</el-form-item>
 				</el-col>
 				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
 					<el-form-item label="角色状态" prop="status">
-						<el-switch
-							v-model="state.dataForm.status"
-							:active-value="0"
-							:inactive-value="1"
-							inline-prompt
-							active-text="启用"
-							inactive-text="禁用"
-						></el-switch>
+						<el-switch v-model="state.dataForm.status" :active-value="0" :inactive-value="1" inline-prompt
+							active-text="启用" inactive-text="禁用"></el-switch>
 					</el-form-item>
 				</el-col>
 				<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="mb20">
 					<el-form-item label="角色描述" prop="remark">
-						<el-input v-model="state.dataForm.remark" type="textarea" placeholder="请输入角色描述" maxlength="150"></el-input>
+						<el-input v-model="state.dataForm.remark" type="textarea" placeholder="请输入角色描述"
+							maxlength="150"></el-input>
 					</el-form-item>
 				</el-col>
 				<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="mb20">
 					<el-form-item label="菜单权限">
-						<el-tree ref="roleMenuRef" :data="state.menuData" :props="state.menuProps" class="menu-data-tree" node-key="id" show-checkbox />
+						<el-tree ref="roleMenuRef" :data="state.menuData" :props="state.menuProps" class="menu-data-tree"
+							node-key="id" show-checkbox />
 					</el-form-item>
 				</el-col>
 			</el-row>
@@ -55,8 +52,6 @@ import { reactive, ref, nextTick } from 'vue';
 import { ElMessage, ElTree } from 'element-plus';
 import roleApi from '/@/api/system/role';
 import menuApi from '/@/api/system/menu';
-import { de } from 'element-plus/es/locale';
-import { number } from 'echarts';
 
 // 定义子组件向父组件传值/事件
 const emit = defineEmits(['refresh']);
@@ -152,9 +147,7 @@ const onSubmit = () => {
 const getMenuData = () => {
 	menuApi.list().then((res) => {
 		if (res.success) {
-			nextTick(() => {
-				state.menuData = buildMenuTree(res.data, 0);
-			});
+			state.menuData = buildMenuTree(res.data, 0);
 		}
 	});
 };
@@ -196,13 +189,11 @@ defineExpose({
 </script>
 
 <style scoped lang="scss">
-.system-role-dialog-container {
-	.menu-data-tree {
-		width: 100%;
-		border: 1px solid var(--el-border-color);
-		border-radius: var(--el-input-border-radius, var(--el-border-radius-base));
-		padding: 5px;
-	}
+.menu-data-tree {
+	width: 100%;
+	border: 1px solid var(--el-border-color);
+	border-radius: var(--el-input-border-radius, var(--el-border-radius-base));
+	padding: 5px;
 }
 </style>
 

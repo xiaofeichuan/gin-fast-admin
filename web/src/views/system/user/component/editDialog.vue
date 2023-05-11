@@ -4,7 +4,8 @@
 			<el-row :gutter="30">
 				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
 					<el-form-item label="账号名称" prop="userName">
-						<el-input v-model="state.dataForm.userName" placeholder="请输入账号名称" :disabled="state.dialog.isEdit" clearable></el-input>
+						<el-input v-model="state.dataForm.userName" placeholder="请输入账号名称" :disabled="state.dialog.isEdit"
+							clearable></el-input>
 					</el-form-item>
 				</el-col>
 				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
@@ -29,46 +30,37 @@
 							<!-- <el-option label="未知" :value="0"></el-option>
 							<el-option label="男" :value="1"></el-option>
 							<el-option label="女" :value="2"></el-option> -->
-							<el-option v-for="item in state.userGenderOption" :key="item.dictItemValue" :label="item.dictItemName" :value="item.dictItemValue">
+							<el-option v-for="item in useDictData().getDictItem('user_gender')" :key="item.dictItemValue"
+								:label="item.dictItemName" :value="item.dictItemValue">
 							</el-option>
 						</el-select>
 					</el-form-item>
 				</el-col>
 				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
 					<el-form-item label="用户状态" prop="status">
-						<el-switch
-							v-model="state.dataForm.status"
-							:active-value="0"
-							:inactive-value="1"
-							inline-prompt
-							active-text="启用"
-							inactive-text="禁用"
-						></el-switch>
+						<el-switch v-model="state.dataForm.status" :active-value="0" :inactive-value="1" inline-prompt
+							active-text="启用" inactive-text="禁用"></el-switch>
 					</el-form-item>
 				</el-col>
 				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" v-if="!state.dialog.isEdit">
 					<el-form-item label="账户密码" prop="password">
-						<el-input v-model="state.dataForm.password" placeholder="请输入账户密码" type="password" show-password></el-input>
+						<el-input v-model="state.dataForm.password" placeholder="请输入账户密码" type="password"
+							show-password></el-input>
 					</el-form-item>
 				</el-col>
 				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
 					<el-form-item label="用户角色" prop="roleIds">
-						<el-select
-							v-model="state.dataForm.roleIds"
-							multiple
-							collapse-tags
-							collapse-tags-tooltip
-							:max-collapse-tags="2"
-							placeholder="请选择角色"
-							style="width: 100%"
-						>
-							<el-option v-for="item in state.roleOption" :key="item.id" :label="item.roleName" :value="item.id" />
+						<el-select v-model="state.dataForm.roleIds" multiple collapse-tags collapse-tags-tooltip
+							:max-collapse-tags="2" placeholder="请选择角色" style="width: 100%">
+							<el-option v-for="item in state.roleOption" :key="item.id" :label="item.roleName"
+								:value="item.id" />
 						</el-select>
 					</el-form-item>
 				</el-col>
 				<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="mb20">
 					<el-form-item label="用户备注" prop="remark">
-						<el-input v-model="state.dataForm.remark" type="textarea" placeholder="请输入用户描述" maxlength="150"></el-input>
+						<el-input v-model="state.dataForm.remark" type="textarea" placeholder="请输入用户描述"
+							maxlength="150"></el-input>
 					</el-form-item>
 				</el-col>
 			</el-row>
@@ -114,20 +106,18 @@ const state = reactive({
 		phone: [{ pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: '请输入正确的手机号码', trigger: 'blur' }],
 		password: [{ pattern: /^(?=.*[0-9])(.{6,18})$/, message: '请输入6-18位密码', trigger: 'blur' }],
 	},
-	
+
 	dialog: {
 		isShowDialog: false,
 		isEdit: false,
 		title: '',
 	},
-	roleOption: [],
-	userGenderOption: [],
+	roleOption: [] as any,
 });
 
 // 打开弹窗
 const openDialog = (row: any) => {
 	getRoleOption();
-	state.userGenderOption = useDictData().getDictItem('user_gender');
 	if (row) {
 		state.dialog.isEdit = true;
 		state.dialog.title = '编辑用户';
@@ -138,7 +128,7 @@ const openDialog = (row: any) => {
 		state.dialog.isEdit = false;
 		state.dialog.title = '添加用户';
 	}
-	
+
 	state.dialog.isShowDialog = true;
 };
 

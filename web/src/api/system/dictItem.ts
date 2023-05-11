@@ -17,7 +17,7 @@ class DictItemApi {
 		});
 	}
 	/**
-	 * 字典选项新增
+	 * 新增字典选项
 	 * @param parameter 
 	 * @returns 
 	 */
@@ -29,7 +29,7 @@ class DictItemApi {
 		});
 	}
 	/**
-	 * 字典选项新增
+	 * 更新字典选项
 	 * @param parameter 
 	 * @returns 
 	 */
@@ -41,7 +41,7 @@ class DictItemApi {
 		});
 	}
 	/**
-	 * 字典选项删除
+	 * 删除字典选项
 	 * @param parameter 
 	 * @returns 
 	 */
@@ -53,7 +53,7 @@ class DictItemApi {
 		});
 	}
 	/**
-	 * 字典选项删除
+	 * 字典选项详情
 	 * @param parameter 
 	 * @returns 
 	 */

@@ -17,7 +17,7 @@ import request from '/@/utils/request';
 		});
 	}
 	/**
-	 * 配置新增
+	 * 新增配置
 	 * @param parameter 
 	 * @returns 
 	 */
@@ -29,7 +29,7 @@ import request from '/@/utils/request';
 		});
 	}
 	/**
-	 * 配置新增
+	 * 更新配置
 	 * @param parameter 
 	 * @returns 
 	 */
@@ -53,7 +53,7 @@ import request from '/@/utils/request';
 		});
 	}
 	/**
-	 * 配置删除
+	 * 配置详情
 	 * @param parameter 
 	 * @returns 
 	 */

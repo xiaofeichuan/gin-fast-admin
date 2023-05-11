@@ -1,8 +1,8 @@
 {
-	"name": "vue-next-admin-template",
+	"name": "go-fast-admin",
 	"version": "2.4.21",
-	"description": "vue3 vite next admin template",
-	"author": "lyt_20201208",
+	"description": "基于Go+Vue开发的权限管理系统",
+	"author": "xiaofeichuan",
 	"license": "MIT",
 	"scripts": {
 		"dev": "vite --force",
@@ -27,7 +27,6 @@
 		"vue-router": "^4.1.6"
 	},
 	"devDependencies": {
-		"@types/node": "^18.11.13",
 		"@types/nprogress": "^0.2.0",
 		"@typescript-eslint/eslint-plugin": "^5.46.0",
 		"@typescript-eslint/parser": "^5.46.0",
@@ -57,11 +56,9 @@
 	"keywords": [
 		"vue",
 		"vue3",
-		"vuejs/vue-next",
-		"vuejs/vue-next-template",
 		"element-ui",
 		"element-plus",
-		"vue-next-admin",
+		"go-fast-admin",
 		"next-admin"
 	],
 	"repository": {

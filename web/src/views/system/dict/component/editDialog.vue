@@ -79,7 +79,7 @@ const state = reactive({
 		isEdit: false,
 		title: '',
 	},
-	dictTypeOption: [],
+	dictTypeOption:[],
 });
 
 // 打开弹窗

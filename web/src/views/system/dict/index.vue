@@ -123,7 +123,7 @@ const handleQuery = () => {
 	});
 };
 // 打开编辑弹窗
-const openEditDialog = (row: any) => {
+const openEditDialog = (row?: any) => {
 	editFormRef.value.openDialog(row);
 };
 

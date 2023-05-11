@@ -12,14 +12,15 @@ import (
 type SystemRouter struct{}
 
 var (
-	sysConfigApi   = &api.SysConfigApi{}
-	sysDictApi     = &api.SysDictApi{}
-	sysDictItemApi = &api.SysDictItemApi{}
-	sysAuthApi     = &api.SysAuthApi{}
-	sysMenuApi     = &api.SysMenuApi{}
-	sysUserApi     = &api.SysUserApi{}
-	sysRoleApi     = &api.SysRoleApi{}
-	sysTableApi    = &api.SysTableApi{}
+	sysAuthApi        = &api.SysAuthApi{}
+	sysConfigApi      = &api.SysConfigApi{}
+	sysDictApi        = &api.SysDictApi{}
+	sysDictItemApi    = &api.SysDictItemApi{}
+	sysMenuApi        = &api.SysMenuApi{}
+	sysUserApi        = &api.SysUserApi{}
+	sysRoleApi        = &api.SysRoleApi{}
+	sysGenTableApi    = &api.SysGenTableApi{}
+	sysGenTableColumn = &api.SysGenTableColumnApi{}
 )
 
 // InitPublicRouter 初始化公开路由
@@ -114,10 +115,21 @@ func (s *SystemRouter) InitPrivateRouter(routerGroup *gin.RouterGroup) {
 	}
 
 	//代码生成（表）
-	tableRouter := routerGroup.Group("/system/sysTable")
+	genTableApi := routerGroup.Group("/system/genTable")
 	{
-		tableRouter.GET("getDBTableInfos", sysTableApi.GetDBTableInfos) // 获取当前数据库所有表信息
-		tableRouter.POST("importTables", sysTableApi.ImportTables)      // 导入表
-		tableRouter.GET("previewCode", sysTableApi.PreviewCode)         // 导入表
+		genTableApi.GET("query", sysGenTableApi.Query)             // 代码生成查询
+		genTableApi.POST("add", sysGenTableApi.Add)                // 添加代码生成
+		genTableApi.POST("update", sysGenTableApi.Update)          // 更新代码生成
+		genTableApi.POST("delete", sysGenTableApi.Delete)          // 删除代码生成
+		genTableApi.GET("detail", sysGenTableApi.Detail)           // 代码生成详情
+		genTableApi.GET("tableList", sysGenTableApi.GetTableList)  // 获取表列表
+		genTableApi.GET("previewCode", sysGenTableApi.PreviewCode) // 导入表
+	}
+
+	//代码生成（表字段）
+	genTableColumnApi := routerGroup.Group("/system/genTableColumn")
+	{
+		genTableColumnApi.POST("update", sysGenTableColumn.Update) // 更新代码生成（表字段）
+		genTableColumnApi.GET("list", sysGenTableColumn.List)      // 代码生成（表字段）列表
 	}
 }

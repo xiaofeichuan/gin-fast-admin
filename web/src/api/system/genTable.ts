@@ -1,89 +1,99 @@
 import request from '/@/utils/request';
 
 /**
- * 菜单接口
+ * 代码生成（表）接口
  */
- class MenuApi {
+ class GenTableApi {
 	/**
-	 * 菜单查询
+	 * 代码生成查询
 	 * @param parameter 
 	 * @returns 
 	 */
 	query(parameter:any) {
 		return request({
-			url: '/system/menu/query',
+			url: '/system/genTable/query',
 			method: 'get',
 			params: parameter
 		});
 	}
 	/**
-	 * 新增菜单
+	 * 新增代码生成
 	 * @param parameter 
 	 * @returns 
 	 */
 	 add(parameter:any) {
 		return request({
-			url: '/system/menu/add',
+			url: '/system/genTable/add',
 			method: 'post',
 			data: parameter
 		});
 	}
 	/**
-	 * 更新菜单
+	 * 更新代码生成
 	 * @param parameter 
 	 * @returns 
 	 */
 	 update(parameter:any) {
 		return request({
-			url: '/system/menu/update',
+			url: '/system/genTable/update',
 			method: 'post',
 			data: parameter
 		});
 	}
 	/**
-	 * 删除菜单
+	 * 删除代码生成
 	 * @param parameter 
 	 * @returns 
 	 */
 	 delete(parameter:any) {
 		return request({
-			url: '/system/menu/delete',
+			url: '/system/genTable/delete',
 			method: 'post',
 			data: parameter
 		});
 	}
 	/**
-	 * 菜单详情
+	 * 代码生成详情
 	 * @param parameter 
 	 * @returns 
 	 */
 	 detail(parameter:any) {
 		return request({
-			url: '/system/menu/detail',
+			url: '/system/genTable/detail',
 			method: 'get',
 			params: parameter
 		});
 	}
 	/**
-	 * 菜单列表
+	 * 代码生成列表
 	 * @returns 
 	 */
 	 list() {
 		return request({
-			url: '/system/menu/list',
+			url: '/system/genTable/list',
 			method: 'get',
 		});
 	}
 	/**
-	 * 菜单树状
+	 * 获取表列表
 	 * @returns 
 	 */
-	tree() {
+	tableList() {
 		return request({
-			url: '/system/menu/tree',
+			url: '/system/genTable/tableList',
+			method: 'get',
+		});
+	}
+	/**
+	 * 获取表列表
+	 * @returns 
+	 */
+	previewCode() {
+		return request({
+			url: '/system/genTable/previewCode',
 			method: 'get',
 		});
 	}
 }
 
-export default new MenuApi()
+export default new GenTableApi()

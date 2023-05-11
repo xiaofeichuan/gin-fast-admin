@@ -15,110 +15,6 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/sysTable/getDBTableInfos": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "tags": [
-                    "代码生成器"
-                ],
-                "summary": "获取当前数据库所有表信息",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.JsonResult"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/dto.TableInfoVo"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/sysTable/importTables": {
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "tags": [
-                    "代码生成器"
-                ],
-                "summary": "导入表",
-                "parameters": [
-                    {
-                        "description": "表名",
-                        "name": "tableNames",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/response.JsonResult"
-                        }
-                    }
-                }
-            }
-        },
-        "/sysTable/previewCode": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "tags": [
-                    "代码生成器"
-                ],
-                "summary": "预览代码",
-                "parameters": [
-                    {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                        "description": "表名",
-                        "name": "tableId",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/response.JsonResult"
-                        }
-                    }
-                }
-            }
-        },
         "/system/auth/captcha": {
             "get": {
                 "security": [
@@ -998,6 +894,348 @@ const docTemplate = `{
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions/dto.SysDictItemUpdateDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.JsonResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/system/genTable/add": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "代码生成（表）"
+                ],
+                "summary": "添加代码生成（表）",
+                "parameters": [
+                    {
+                        "description": "请求参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.SysGenTableAddDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.JsonResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/system/genTable/delete": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "代码生成（表）"
+                ],
+                "summary": "删除代码生成（表）",
+                "parameters": [
+                    {
+                        "description": "请求参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.IdInfoDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.JsonResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/system/genTable/detail": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "代码生成（表）"
+                ],
+                "summary": "获取代码生成（表）详情",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id编号",
+                        "name": "id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.JsonResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/dto.SysGenTableVo"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/system/genTable/previewCode": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "代码生成（表）"
+                ],
+                "summary": "预览代码",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "表id",
+                        "name": "tableId",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.JsonResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/system/genTable/query": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "代码生成（表）"
+                ],
+                "summary": "代码生成（表）查询",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "pageIndex",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页数量",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "表名称",
+                        "name": "tableName",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.JsonResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/response.PageResult"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "list": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/dto.SysGenTableVo"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/system/genTable/tableList": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "代码生成（表）"
+                ],
+                "summary": "获取表列表",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.JsonResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/dto.TableInfoVo"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/system/genTable/update": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "代码生成（表）"
+                ],
+                "summary": "更新代码生成（表）",
+                "parameters": [
+                    {
+                        "description": "请求参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.SysGenTableUpdateDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.JsonResult"
+                        }
+                    }
+                }
+            }
+        },
+        "/system/genTableColumn/list": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "代码生成（表字段）"
+                ],
+                "summary": "代码生成（表字段）列表",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.JsonResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/dto.SysGenTableColumnVo"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/system/genTableColumn/update": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "tags": [
+                    "代码生成（表字段）"
+                ],
+                "summary": "更新代码生成（表字段）",
+                "parameters": [
+                    {
+                        "description": "请求参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.SysGenTableUpdateDto"
+                            }
                         }
                     }
                 ],
@@ -2461,6 +2699,185 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.SysGenTableAddDto": {
+            "type": "object",
+            "properties": {
+                "businessName": {
+                    "description": "业务名称",
+                    "type": "string"
+                },
+                "functionName": {
+                    "description": "功能名称",
+                    "type": "string"
+                },
+                "modelName": {
+                    "description": "实体名称",
+                    "type": "string"
+                },
+                "moduleName": {
+                    "description": "模块名称",
+                    "type": "string"
+                },
+                "paramName": {
+                    "description": "参数名称",
+                    "type": "string"
+                },
+                "tableComment": {
+                    "description": "表注释",
+                    "type": "string"
+                },
+                "tableName": {
+                    "description": "表名称",
+                    "type": "string"
+                }
+            }
+        },
+        "dto.SysGenTableColumnVo": {
+            "type": "object",
+            "properties": {
+                "codeField": {
+                    "description": "代码字段",
+                    "type": "string"
+                },
+                "codeType": {
+                    "description": "代码类型",
+                    "type": "string"
+                },
+                "columnComment": {
+                    "description": "字段注释",
+                    "type": "string"
+                },
+                "columnName": {
+                    "description": "字段名",
+                    "type": "string"
+                },
+                "columnType": {
+                    "description": "字段类型",
+                    "type": "string"
+                },
+                "createdAt": {
+                    "description": "创建时间",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "Id",
+                    "type": "integer"
+                },
+                "isEdit": {
+                    "description": "是否编辑字段（0否 1是）",
+                    "type": "boolean"
+                },
+                "isList": {
+                    "description": "是否列表字段（0否 1是）",
+                    "type": "boolean"
+                },
+                "isPk": {
+                    "description": "是否主键（0否 1是）",
+                    "type": "boolean"
+                },
+                "isQuery": {
+                    "description": "是否查询字段（0否 1是）",
+                    "type": "boolean"
+                },
+                "jsonField": {
+                    "description": "参数名称",
+                    "type": "string"
+                },
+                "queryMethod": {
+                    "description": "查询方式",
+                    "type": "string"
+                },
+                "tableId": {
+                    "description": "表编号",
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "description": "更新时间",
+                    "type": "string"
+                }
+            }
+        },
+        "dto.SysGenTableUpdateDto": {
+            "type": "object",
+            "properties": {
+                "businessName": {
+                    "description": "业务名称",
+                    "type": "string"
+                },
+                "functionName": {
+                    "description": "功能名称",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "编号",
+                    "type": "integer"
+                },
+                "modelName": {
+                    "description": "实体名称",
+                    "type": "string"
+                },
+                "moduleName": {
+                    "description": "模块名称",
+                    "type": "string"
+                },
+                "paramName": {
+                    "description": "参数名称",
+                    "type": "string"
+                },
+                "tableComment": {
+                    "description": "表注释",
+                    "type": "string"
+                },
+                "tableName": {
+                    "description": "表名称",
+                    "type": "string"
+                }
+            }
+        },
+        "dto.SysGenTableVo": {
+            "type": "object",
+            "properties": {
+                "businessName": {
+                    "description": "业务名称",
+                    "type": "string"
+                },
+                "createdAt": {
+                    "description": "创建时间",
+                    "type": "string"
+                },
+                "functionName": {
+                    "description": "功能名称",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "modelName": {
+                    "description": "实体名称",
+                    "type": "string"
+                },
+                "moduleName": {
+                    "description": "模块名称",
+                    "type": "string"
+                },
+                "paramName": {
+                    "description": "参数名称",
+                    "type": "string"
+                },
+                "tableComment": {
+                    "description": "表注释",
+                    "type": "string"
+                },
+                "tableName": {
+                    "description": "表名称",
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "description": "更新时间",
+                    "type": "string"
+                }
+            }
+        },
         "dto.SysMenuAddDto": {
             "type": "object",
             "properties": {
@@ -3010,23 +3427,16 @@ const docTemplate = `{
                     "description": "业务名称",
                     "type": "string"
                 },
-                "columnList": {
-                    "description": "字段列表",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/model.SysGenTableColumn"
-                    }
-                },
-                "createTime": {
-                    "description": "创建时间",
-                    "type": "string"
-                },
                 "functionName": {
                     "description": "功能名称",
                     "type": "string"
                 },
                 "modelName": {
                     "description": "实体名称",
+                    "type": "string"
+                },
+                "moduleName": {
+                    "description": "模块名称",
                     "type": "string"
                 },
                 "paramName": {
@@ -3039,10 +3449,6 @@ const docTemplate = `{
                 },
                 "tableName": {
                     "description": "表名称",
-                    "type": "string"
-                },
-                "updateTime": {
-                    "description": "更新时间",
                     "type": "string"
                 }
             }
@@ -3113,56 +3519,6 @@ const docTemplate = `{
                             "$ref": "#/definitions/consts.UserType"
                         }
                     ]
-                }
-            }
-        },
-        "model.SysGenTableColumn": {
-            "type": "object",
-            "properties": {
-                "columnComment": {
-                    "type": "string"
-                },
-                "columnName": {
-                    "type": "string"
-                },
-                "columnType": {
-                    "type": "string"
-                },
-                "createdAt": {
-                    "type": "string"
-                },
-                "goField": {
-                    "type": "string"
-                },
-                "goType": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "isEdit": {
-                    "type": "boolean"
-                },
-                "isList": {
-                    "type": "boolean"
-                },
-                "isPk": {
-                    "type": "boolean"
-                },
-                "isQuery": {
-                    "type": "boolean"
-                },
-                "jsonField": {
-                    "type": "string"
-                },
-                "queryMethod": {
-                    "type": "string"
-                },
-                "tableId": {
-                    "type": "integer"
-                },
-                "updatedAt": {
-                    "type": "string"
                 }
             }
         },

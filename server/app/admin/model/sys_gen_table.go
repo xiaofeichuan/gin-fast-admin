@@ -8,8 +8,10 @@ type SysGenTable struct {
 	TableComment string `json:"tableComment" gorm:"comment:表注释"`
 	ModelName    string `json:"modelName" gorm:"comment:实体名称"`
 	BusinessName string `json:"businessName" gorm:"comment:业务名称"`
+	ModuleName   string `json:"moduleName" gorm:"comment:模块名称"`
 	FunctionName string `json:"functionName" gorm:"comment:功能名称"`
 	ParamName    string `json:"paramName" gorm:"comment:参数名称"`
+	MenuParentId int64  `json:"menuParentId" gorm:"comment:上级菜单"`
 	common.BaseModel
 }
 

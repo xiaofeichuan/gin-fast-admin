@@ -127,14 +127,14 @@ func (s *SysMenuService) Detail(id int64) (obj dto.SysMenuVo, err error) {
 
 // List 角色列表
 func (s *SysMenuService) List() (objs []dto.SysMenuVo, err error) {
-	err = global.DB.Model(&model.SysMenu{}).Where("status = ?", consts.MenuStatusEnable).Scan(&objs).Error
+	err = global.DB.Model(&model.SysMenu{}).Where("status = ?", consts.MenuStatusEnable).Order("sort,id ASC").Scan(&objs).Error
 	return objs, err
 }
 
 // GetMenuTree 获取菜单树状
 func (s *SysMenuService) GetMenuTree() (objs []dto.SysMenuVo, err error) {
 
-	err = global.DB.Model(&model.SysMenu{}).Find(&objs).Error
+	err = global.DB.Model(&model.SysMenu{}).Order("sort,id ASC").Find(&objs).Error
 	if err != nil {
 		return nil, err
 	}

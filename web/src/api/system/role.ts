@@ -17,7 +17,7 @@ import request from '/@/utils/request';
 		});
 	}
 	/**
-	 * 角色新增
+	 * 新增角色
 	 * @param parameter 
 	 * @returns 
 	 */
@@ -29,7 +29,7 @@ import request from '/@/utils/request';
 		});
 	}
 	/**
-	 * 角色新增
+	 * 更新角色
 	 * @param parameter 
 	 * @returns 
 	 */
@@ -41,7 +41,7 @@ import request from '/@/utils/request';
 		});
 	}
 	/**
-	 * 角色删除
+	 * 删除角色
 	 * @param parameter 
 	 * @returns 
 	 */
@@ -53,7 +53,7 @@ import request from '/@/utils/request';
 		});
 	}
 	/**
-	 * 角色删除
+	 * 角色详情
 	 * @param parameter 
 	 * @returns 
 	 */

@@ -391,6 +391,137 @@ definitions:
         description: 更新时间
         type: string
     type: object
+  dto.SysGenTableAddDto:
+    properties:
+      businessName:
+        description: 业务名称
+        type: string
+      functionName:
+        description: 功能名称
+        type: string
+      modelName:
+        description: 实体名称
+        type: string
+      moduleName:
+        description: 模块名称
+        type: string
+      paramName:
+        description: 参数名称
+        type: string
+      tableComment:
+        description: 表注释
+        type: string
+      tableName:
+        description: 表名称
+        type: string
+    type: object
+  dto.SysGenTableColumnVo:
+    properties:
+      codeField:
+        description: 代码字段
+        type: string
+      codeType:
+        description: 代码类型
+        type: string
+      columnComment:
+        description: 字段注释
+        type: string
+      columnName:
+        description: 字段名
+        type: string
+      columnType:
+        description: 字段类型
+        type: string
+      createdAt:
+        description: 创建时间
+        type: string
+      id:
+        description: Id
+        type: integer
+      isEdit:
+        description: 是否编辑字段（0否 1是）
+        type: boolean
+      isList:
+        description: 是否列表字段（0否 1是）
+        type: boolean
+      isPk:
+        description: 是否主键（0否 1是）
+        type: boolean
+      isQuery:
+        description: 是否查询字段（0否 1是）
+        type: boolean
+      jsonField:
+        description: 参数名称
+        type: string
+      queryMethod:
+        description: 查询方式
+        type: string
+      tableId:
+        description: 表编号
+        type: integer
+      updatedAt:
+        description: 更新时间
+        type: string
+    type: object
+  dto.SysGenTableUpdateDto:
+    properties:
+      businessName:
+        description: 业务名称
+        type: string
+      functionName:
+        description: 功能名称
+        type: string
+      id:
+        description: 编号
+        type: integer
+      modelName:
+        description: 实体名称
+        type: string
+      moduleName:
+        description: 模块名称
+        type: string
+      paramName:
+        description: 参数名称
+        type: string
+      tableComment:
+        description: 表注释
+        type: string
+      tableName:
+        description: 表名称
+        type: string
+    type: object
+  dto.SysGenTableVo:
+    properties:
+      businessName:
+        description: 业务名称
+        type: string
+      createdAt:
+        description: 创建时间
+        type: string
+      functionName:
+        description: 功能名称
+        type: string
+      id:
+        type: integer
+      modelName:
+        description: 实体名称
+        type: string
+      moduleName:
+        description: 模块名称
+        type: string
+      paramName:
+        description: 参数名称
+        type: string
+      tableComment:
+        description: 表注释
+        type: string
+      tableName:
+        description: 表名称
+        type: string
+      updatedAt:
+        description: 更新时间
+        type: string
+    type: object
   dto.SysMenuAddDto:
     properties:
       component:
@@ -766,19 +897,14 @@ definitions:
       businessName:
         description: 业务名称
         type: string
-      columnList:
-        description: 字段列表
-        items:
-          $ref: '#/definitions/model.SysGenTableColumn'
-        type: array
-      createTime:
-        description: 创建时间
-        type: string
       functionName:
         description: 功能名称
         type: string
       modelName:
         description: 实体名称
+        type: string
+      moduleName:
+        description: 模块名称
         type: string
       paramName:
         description: 参数名称
@@ -788,9 +914,6 @@ definitions:
         type: string
       tableName:
         description: 表名称
-        type: string
-      updateTime:
-        description: 更新时间
         type: string
     type: object
   dto.UpdatePwdDto:
@@ -841,39 +964,6 @@ definitions:
         - $ref: '#/definitions/consts.UserType'
         description: 用户类型（0普通账号，1超级管理员）
     type: object
-  model.SysGenTableColumn:
-    properties:
-      columnComment:
-        type: string
-      columnName:
-        type: string
-      columnType:
-        type: string
-      createdAt:
-        type: string
-      goField:
-        type: string
-      goType:
-        type: string
-      id:
-        type: integer
-      isEdit:
-        type: boolean
-      isList:
-        type: boolean
-      isPk:
-        type: boolean
-      isQuery:
-        type: boolean
-      jsonField:
-        type: string
-      queryMethod:
-        type: string
-      tableId:
-        type: integer
-      updatedAt:
-        type: string
-    type: object
   request.IdInfoDto:
     properties:
       id:
@@ -908,66 +998,6 @@ info:
   title: 系统模块
   version: 1.0.0
 paths:
-  /sysTable/getDBTableInfos:
-    get:
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/response.JsonResult'
-            - properties:
-                data:
-                  items:
-                    $ref: '#/definitions/dto.TableInfoVo'
-                  type: array
-              type: object
-      security:
-      - ApiKeyAuth: []
-      summary: 获取当前数据库所有表信息
-      tags:
-      - 代码生成器
-  /sysTable/importTables:
-    post:
-      parameters:
-      - description: 表名
-        in: body
-        name: tableNames
-        required: true
-        schema:
-          items:
-            type: string
-          type: array
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/response.JsonResult'
-      security:
-      - ApiKeyAuth: []
-      summary: 导入表
-      tags:
-      - 代码生成器
-  /sysTable/previewCode:
-    get:
-      parameters:
-      - description: 表名
-        in: query
-        items:
-          type: string
-        name: tableId
-        required: true
-        type: array
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/response.JsonResult'
-      security:
-      - ApiKeyAuth: []
-      summary: 预览代码
-      tags:
-      - 代码生成器
   /system/auth/captcha:
     get:
       responses:
@@ -1466,6 +1496,199 @@ paths:
       summary: 更新字典选项
       tags:
       - 字典选项
+  /system/genTable/add:
+    post:
+      parameters:
+      - description: 请求参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.SysGenTableAddDto'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.JsonResult'
+      security:
+      - ApiKeyAuth: []
+      summary: 添加代码生成（表）
+      tags:
+      - 代码生成（表）
+  /system/genTable/delete:
+    post:
+      parameters:
+      - description: 请求参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.IdInfoDto'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.JsonResult'
+      security:
+      - ApiKeyAuth: []
+      summary: 删除代码生成（表）
+      tags:
+      - 代码生成（表）
+  /system/genTable/detail:
+    get:
+      parameters:
+      - description: id编号
+        in: query
+        name: id
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JsonResult'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.SysGenTableVo'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 获取代码生成（表）详情
+      tags:
+      - 代码生成（表）
+  /system/genTable/previewCode:
+    get:
+      parameters:
+      - description: 表id
+        in: query
+        name: tableId
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.JsonResult'
+      security:
+      - ApiKeyAuth: []
+      summary: 预览代码
+      tags:
+      - 代码生成（表）
+  /system/genTable/query:
+    get:
+      parameters:
+      - description: 页码
+        in: query
+        name: pageIndex
+        type: integer
+      - description: 每页数量
+        in: query
+        name: pageSize
+        type: integer
+      - description: 表名称
+        in: query
+        name: tableName
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JsonResult'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.PageResult'
+                  - properties:
+                      list:
+                        items:
+                          $ref: '#/definitions/dto.SysGenTableVo'
+                        type: array
+                    type: object
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 代码生成（表）查询
+      tags:
+      - 代码生成（表）
+  /system/genTable/tableList:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JsonResult'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/dto.TableInfoVo'
+                  type: array
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 获取表列表
+      tags:
+      - 代码生成（表）
+  /system/genTable/update:
+    post:
+      parameters:
+      - description: 请求参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.SysGenTableUpdateDto'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.JsonResult'
+      security:
+      - ApiKeyAuth: []
+      summary: 更新代码生成（表）
+      tags:
+      - 代码生成（表）
+  /system/genTableColumn/list:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JsonResult'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/dto.SysGenTableColumnVo'
+                  type: array
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 代码生成（表字段）列表
+      tags:
+      - 代码生成（表字段）
+  /system/genTableColumn/update:
+    post:
+      parameters:
+      - description: 请求参数
+        in: body
+        name: data
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/dto.SysGenTableUpdateDto'
+          type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.JsonResult'
+      security:
+      - ApiKeyAuth: []
+      summary: 更新代码生成（表字段）
+      tags:
+      - 代码生成（表字段）
   /system/menu/add:
     post:
       parameters:

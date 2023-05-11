@@ -1,55 +1,105 @@
 package api
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
+	"go-fast-admin/server/app/admin/dto"
+	"go-fast-admin/server/common/dto/request"
 	"go-fast-admin/server/common/dto/response"
+	"strconv"
 )
 
-type SysTableApi struct{}
+type SysGenTableApi struct{}
 
-// GetDBTableInfos
-// @Summary 获取当前数据库所有表信息
-// @Tags 代码生成器
-// @Success 200 {object} response.JsonResult{data=[]dto.TableInfoVo}
+// Query
+// @Tags 代码生成（表）
+// @Summary 代码生成（表）查询
 // @Security ApiKeyAuth
-// @Router /sysTable/getDBTableInfos [get]
-func (sysTableApi *SysTableApi) GetDBTableInfos(c *gin.Context) {
-	tableInfos, err := genTableService.GetDBTableInfos()
-	response.Complete(tableInfos, err, c)
+// @Param data query dto.SysGenTableQuery true "请求参数"
+// @Success 200 {object} response.JsonResult{data=response.PageResult{list=[]dto.SysGenTableVo}}
+// @Router  /system/genTable/query [get]
+func (s *SysGenTableApi) Query(c *gin.Context) {
+	var query dto.SysGenTableQuery
+	c.ShouldBindQuery(&query)
+	list, total, err := genTableService.Query(query)
+	response.Complete(response.PageResult{List: list, TotalCount: total}, err, c)
 }
 
-// ImportTables
-// @Summary 导入表
-// @Tags 代码生成器
-// @param tableNames body []string true "表名"
-// @Success 200 {object} response.JsonResult
+// Add
+// @Tags 代码生成（表）
+// @Summary 添加代码生成（表）
 // @Security ApiKeyAuth
-// @Router /sysTable/importTables [post]
-func (sysTableApi *SysTableApi) ImportTables(c *gin.Context) {
-	var tableNames []string
-	c.ShouldBindJSON(&tableNames)
-	fmt.Println(tableNames)
-	// 生成表
-	tables, err := genTableService.ImportGentTable(tableNames)
-	if err != nil {
-		response.FailWithMessage(err.Error(), c)
-		return
-	}
-	// 生成表字段
-	err = genTableColumnService.ImportGenTableColumn(tableNames, tables)
+// @Param data body dto.SysGenTableAddDto true "请求参数"
+// @Success 200 {object} response.JsonResult
+// @Router  /system/genTable/add [post]
+func (s *SysGenTableApi) Add(c *gin.Context) {
+	var addDto dto.SysGenTableAddDto
+	c.ShouldBindJSON(&addDto)
+	err := genTableService.Add(addDto)
 	response.CompleteWithMessage(err, c)
+}
 
+// Update
+// @Tags 代码生成（表）
+// @Summary 更新代码生成（表）
+// @Security ApiKeyAuth
+// @Param data body dto.SysGenTableUpdateDto true "请求参数"
+// @Success 200 {object} response.JsonResult
+// @Router  /system/genTable/update [post]
+func (s *SysGenTableApi) Update(c *gin.Context) {
+	var updateDto dto.SysGenTableUpdateDto
+	c.ShouldBindJSON(&updateDto)
+	err := genTableService.Update(updateDto)
+	response.CompleteWithMessage(err, c)
+}
+
+// Delete
+// @Tags 代码生成（表）
+// @Summary 删除代码生成（表）
+// @Security ApiKeyAuth
+// @Param data body request.IdInfoDto true "请求参数"
+// @Success 200 {object} response.JsonResult
+// @Router  /system/genTable/delete [post]
+func (s *SysGenTableApi) Delete(c *gin.Context) {
+	var idInfoDto request.IdInfoDto
+	c.ShouldBindJSON(&idInfoDto)
+	err := genTableService.Delete(idInfoDto.Id)
+	response.CompleteWithMessage(err, c)
+}
+
+// Detail
+// @Tags 代码生成（表）
+// @Summary 获取代码生成（表）详情
+// @Security ApiKeyAuth
+// @Param data query request.IdInfoDto true "代码生成（表）id"
+// @Success 200 {object} response.JsonResult{data=dto.SysGenTableVo}
+// @Router  /system/genTable/detail [get]
+func (s *SysGenTableApi) Detail(c *gin.Context) {
+	var idInfoDto request.IdInfoDto
+	c.ShouldBindQuery(&idInfoDto)
+	obj, err := genTableService.Detail(idInfoDto.Id)
+	response.Complete(obj, err, c)
+}
+
+// GetTableList
+// @Summary 获取表列表
+// @Tags 代码生成（表）
+// @Success 200 {object} response.JsonResult{data=[]dto.TableInfoVo}
+// @Security ApiKeyAuth
+// @Router /system/genTable/tableList [get]
+func (s *SysGenTableApi) GetTableList(c *gin.Context) {
+	tableList, err := genTableService.GetTableList()
+	response.Complete(tableList, err, c)
 }
 
 // PreviewCode
 // @Summary 预览代码
-// @Tags 代码生成器
-// @param tableId query []string true "表名"
+// @Tags 代码生成（表）
+// @Param tableId query string true "表id"
 // @Success 200 {object} response.JsonResult
 // @Security ApiKeyAuth
-// @Router /sysTable/previewCode [get]
-func (sysTableApi *SysTableApi) PreviewCode(c *gin.Context) {
-	vos, err := genTableService.PreviewCode(1)
+// @Router /system/genTable/previewCode [get]
+func (s *SysGenTableApi) PreviewCode(c *gin.Context) {
+	tableId, err := strconv.ParseInt(c.Query("tableId"), 10, 64)
+	vos, err := genTableService.PreviewCode(tableId)
 	response.Complete(vos, err, c)
 }
