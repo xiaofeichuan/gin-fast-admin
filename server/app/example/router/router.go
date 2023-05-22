@@ -14,10 +14,10 @@ var (
 // InitPublicRouter 初始化公开路由
 func (t *TestRouter) InitPublicRouter(routerGroup *gin.RouterGroup) {
 
-	userRouter := routerGroup.Group("test")
-	{
-		userRouter.POST("demo", testApi.Demo) // 用户登录
-	}
+	//userRouter := routerGroup.Group("test")
+	//{
+	//	userRouter.POST("demo", testApi.Demo) // 用户登录
+	//}
 }
 
 // InitPrivateRouter 初始化私有路由

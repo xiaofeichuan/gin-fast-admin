@@ -107,14 +107,17 @@ const getTableData = () => {
 		state.tableData.loading = false;
 	}, 500);
 };
+
 // 打开新增菜单弹窗
 const onOpenAddDept = (type: string) => {
 	deptDialogRef.value.openDialog(type);
 };
+
 // 打开编辑菜单弹窗
 const onOpenEditDept = (type: string, row: DeptTreeType) => {
 	deptDialogRef.value.openDialog(type, row);
 };
+
 // 删除当前行
 const onTabelRowDel = (row: DeptTreeType) => {
 	ElMessageBox.confirm(`此操作将永久删除部门：${row.deptName}, 是否继续?`, '提示', {
@@ -128,6 +131,7 @@ const onTabelRowDel = (row: DeptTreeType) => {
 		})
 		.catch(() => {});
 };
+
 // 页面加载时
 onMounted(() => {
 	getTableData();

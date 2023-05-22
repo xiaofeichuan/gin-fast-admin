@@ -2,15 +2,19 @@
 	<el-dialog :title="state.dialog.title" v-model="state.dialog.isShowDialog" width="750px" @close="closeDialog">
 		<el-form ref="dataFormRef" :model="state.dataForm" :rules="state.rules" size="default" label-width="90px">
 			<el-row :gutter="35">
+{{- range $index, $item := .ColumnList }}
+	{{- if $item.IsEdit }}
+		{{- if eq $item.ComponentType "Textarea" }}
 				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
-					<el-form-item label="配置名称" prop="configName">
-						<el-input v-model="state.dataForm.configName" placeholder="请输入配置名称" clearable></el-input>
+					<el-form-item label="{{$item.ColumnDescription}}" prop="{{$item.ParamName}}">
+						<el-input v-model="state.dataForm.{{$item.ParamName}}" type="textarea" :rows="2" placeholder="请输入{{$item.ColumnDescription}}" clearable></el-input>
 					</el-form-item>
-				</el-col>
-                <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
-					<el-form-item label="配置状态" prop="status">
+				</el-col>       
+		{{- else if eq $item.ComponentType "Switch" }}
+				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
+					<el-form-item label="{{$item.ColumnDescription}}" prop="{{$item.ParamName}}">
 						<el-switch
-							v-model="state.dataForm.status"
+							v-model="state.dataForm.{{$item.ParamName}}"
 							:active-value="0"
 							:inactive-value="1"
 							inline-prompt
@@ -19,22 +23,38 @@
 						></el-switch>
 					</el-form-item>
 				</el-col>
+		{{- else if eq $item.ComponentType "Select" }}
 				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
-					<el-form-item label="配置键" prop="configKey">						
-						<el-input v-model="state.dataForm.configKey" placeholder="请输入配置键" clearable></el-input>
+					<el-form-item label="{{$item.ColumnDescription}}" prop="{{$item.ParamName}}">
+						<el-select v-model="state.dataForm.{{$item.ParamName}}" placeholder="请选择性别" clearable>
+							<el-option v-for="item in useDictData().getDictItem('{{$item.DictCode}}')" :key="item.dictItemValue"
+								:label="item.dictItemName" :value="item.dictItemValue">
+							</el-option>
+						</el-select>
 					</el-form-item>
 				</el-col>
+		{{- else if eq $item.ComponentType "InputNumber" }}
 				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
-                    <el-form-item label="配置值" prop="configValue">						
-						<el-input v-model="state.dataForm.configValue" placeholder="请输入配置值" clearable></el-input>
+					<el-form-item label="{{$item.ColumnDescription}}" prop="{{$item.ParamName}}">
+						<el-input-number v-model="state.dataForm.{{$item.ParamName}}" :min="0" :max="999" controls-position="right"
+							placeholder="请输入{{$item.ColumnDescription}}"/>
 					</el-form-item>
 				</el-col>
-				
-				<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
-					<el-form-item label="配置描述" prop="remark">
-						<el-input v-model="state.dataForm.remark" type="textarea" placeholder="请输入配置描述" maxlength="150"></el-input>
+		{{- else if eq $item.ComponentType "DateTimePicker" }}
+				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
+					<el-form-item label="{{$item.ColumnDescription}}" prop="{{$item.ParamName}}">
+						<el-date-picker v-model="state.dataForm.{{$item.ParamName}}" type="datetime" />
 					</el-form-item>
 				</el-col>
+		{{- else }}
+				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
+					<el-form-item label="{{$item.ColumnDescription}}" prop="{{$item.ParamName}}">
+						<el-input v-model="state.dataForm.{{$item.ParamName}}" placeholder="请输入{{$item.ColumnDescription}}" clearable></el-input>
+					</el-form-item>
+				</el-col>
+		{{- end }}
+	{{- end }}
+{{- end }}      
 			</el-row>
 		</el-form>
 		<template #footer>
@@ -49,7 +69,7 @@
 <script setup lang="ts">
 import { reactive, ref ,nextTick} from 'vue';
 import { ElMessage } from 'element-plus';
-import configApi from '/@/api/system/config';
+import {{.ModuleName}}Api from '/@/api/{{.BusinessName}}/{{.ModuleName}}';
 
 // 定义子组件向父组件传值/事件
 const emit = defineEmits(['refresh']);
@@ -58,21 +78,13 @@ const emit = defineEmits(['refresh']);
 const dataFormRef = ref();
 const state = reactive({
 	dataForm: {
-		configName: '', // 配置名称
-        status: 0, // 配置状态	
-		configKey: '', // 配置键
-		configValue: '', // 配置值
-		remark: '', // 配置描述
+{{- range $index, $item := .ColumnList }}
+	{{- if $item.IsEdit }}
+		{{$item.ParamName}}: undefined,// {{$item.ColumnDescription}}
+	{{- end }}
+{{- end }}
 	},
-	rules: {
-		configName: [{ required: true, message: '配置名称不能为空', trigger: 'blur' }],
-		configKey: [{ required: true, message: '配置键不能为空', trigger: 'blur' }],
-        configValue: [{ required: true, message: '配置值不能为空', trigger: 'blur' }],
-	},
-	menuProps: {
-		children: 'children',
-		label: 'label',
-	},
+	rules: {},
 	dialog: {
 		isShowDialog: false,
 		isEdit: false,
@@ -100,7 +112,6 @@ const closeDialog = () => {
 	state.dialog.isShowDialog = false;
 	// 重置表单
 	dataFormRef.value.resetFields();
-	
 };
 
 // 提交
@@ -112,7 +123,7 @@ const onSubmit = () => {
 
 		if (state.dialog.isEdit) {
 			//更新
-			configApi.update(state.dataForm).then((res) => {
+			{{.ModuleName}}Api.update(state.dataForm).then((res) => {
 				if (res.success) {
 					ElMessage.success('更新成功');
 					emit('refresh'); //刷新页面
@@ -121,7 +132,7 @@ const onSubmit = () => {
 			});
 		} else {
 			//添加
-			configApi.add(state.dataForm).then((res) => {
+			{{.ModuleName}}Api.add(state.dataForm).then((res) => {
 				if (res.success) {
 					ElMessage.success('添加成功');
 					emit('refresh'); //刷新页面

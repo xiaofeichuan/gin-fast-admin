@@ -2,29 +2,29 @@
 	<el-dialog :title="state.dialog.title" v-model="state.dialog.isShowDialog" width="750px" @close="closeDialog">
 		<el-form ref="dataFormRef" :model="state.dataForm" :rules="state.rules" label-width="90px">
 			<el-row :gutter="30">
-				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
+				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
 					<el-form-item label="账号名称" prop="userName">
 						<el-input v-model="state.dataForm.userName" placeholder="请输入账号名称" :disabled="state.dialog.isEdit"
 							clearable></el-input>
 					</el-form-item>
 				</el-col>
-				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
+				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
 					<el-form-item label="用户昵称" prop="nickName">
 						<el-input v-model="state.dataForm.nickName" placeholder="请输入用户昵称" clearable></el-input>
 					</el-form-item>
 				</el-col>
-				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
+				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
 					<el-form-item label="手机号码" prop="phone">
 						<el-input v-model="state.dataForm.phone" placeholder="请输入手机号" clearable></el-input>
 					</el-form-item>
 				</el-col>
-				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
+				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
 					<el-form-item label="邮箱" prop="email">
 						<el-input v-model="state.dataForm.email" placeholder="请输入邮箱" clearable></el-input>
 					</el-form-item>
 				</el-col>
 
-				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
+				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
 					<el-form-item label="性别" prop="gender">
 						<el-select v-model="state.dataForm.gender" placeholder="请选择性别" clearable class="w100">
 							<!-- <el-option label="未知" :value="0"></el-option>
@@ -36,19 +36,19 @@
 						</el-select>
 					</el-form-item>
 				</el-col>
-				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
+				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
 					<el-form-item label="用户状态" prop="status">
 						<el-switch v-model="state.dataForm.status" :active-value="0" :inactive-value="1" inline-prompt
 							active-text="启用" inactive-text="禁用"></el-switch>
 					</el-form-item>
 				</el-col>
-				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" v-if="!state.dialog.isEdit">
+				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" v-if="!state.dialog.isEdit">
 					<el-form-item label="账户密码" prop="password">
 						<el-input v-model="state.dataForm.password" placeholder="请输入账户密码" type="password"
 							show-password></el-input>
 					</el-form-item>
 				</el-col>
-				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
+				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
 					<el-form-item label="用户角色" prop="roleIds">
 						<el-select v-model="state.dataForm.roleIds" multiple collapse-tags collapse-tags-tooltip
 							:max-collapse-tags="2" placeholder="请选择角色" style="width: 100%">
@@ -57,7 +57,7 @@
 						</el-select>
 					</el-form-item>
 				</el-col>
-				<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="mb20">
+				<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
 					<el-form-item label="用户备注" prop="remark">
 						<el-input v-model="state.dataForm.remark" type="textarea" placeholder="请输入用户描述"
 							maxlength="150"></el-input>
@@ -174,6 +174,7 @@ const getRoleOption = () => {
 		}
 	});
 };
+
 // 获取用户详细
 const getUserDetail = (userId: number) => {
 	userApi.detail({ id: userId }).then((res) => {
@@ -182,6 +183,7 @@ const getUserDetail = (userId: number) => {
 		}
 	});
 };
+
 // 暴露变量
 defineExpose({
 	openDialog,

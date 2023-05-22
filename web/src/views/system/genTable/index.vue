@@ -34,7 +34,7 @@
 			<el-table :data="state.tableData.data" v-loading="state.tableData.loading">
 				<el-table-column prop="id" label="编号" width="60" />
 				<el-table-column prop="tableName" label="表名称" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="tableComment" label="表注释" show-overflow-tooltip></el-table-column>
+				<el-table-column prop="tableDescription" label="表描述" show-overflow-tooltip></el-table-column>
 				<el-table-column prop="businessName" label="业务名称" show-overflow-tooltip></el-table-column>
 				<el-table-column prop="moduleName" label="模块名称" show-overflow-tooltip></el-table-column>
 				<el-table-column prop="modelName" label="实体名称" show-overflow-tooltip></el-table-column>
@@ -83,7 +83,7 @@ const previewRef = ref();
 const configFormRef = ref();
 const router = useRouter();
 
-const state = reactive<SysRoleState>({
+const state = reactive({
 	tableData: {
 		data: [],
 		total: 0,
@@ -153,11 +153,13 @@ const handleDel = (row: any) => {
 		})
 		.catch(() => { });
 };
+
 // 分页改变
 const handleSizeChange = (val: number) => {
 	state.tableData.param.pageSize = val;
 	handleQuery();
 };
+
 // 分页改变
 const handleCurrentChange = (val: number) => {
 	state.tableData.param.pageNum = val;

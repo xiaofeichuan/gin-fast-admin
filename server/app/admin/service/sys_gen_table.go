@@ -2,12 +2,13 @@ package service
 
 import (
 	"bytes"
-	"fmt"
 	"go-fast-admin/server/app/admin/consts"
 	"go-fast-admin/server/app/admin/dto"
 	"go-fast-admin/server/app/admin/model"
+	"go-fast-admin/server/common/tools"
 	"go-fast-admin/server/common/utils"
 	"go-fast-admin/server/global"
+	"path"
 	"strings"
 	"text/template"
 )
@@ -37,19 +38,19 @@ func (s *SysGenTableService) Query(query dto.SysGenTableQuery) (list []dto.SysGe
 // Add 添加业务表
 func (s *SysGenTableService) Add(addDto dto.SysGenTableAddDto) error {
 	var genTable = &model.SysGenTable{
-		TableName:    addDto.TableName,
-		TableComment: addDto.TableComment,
-		ModelName:    addDto.ModelName,
-		BusinessName: addDto.BusinessName,
-		ModuleName:   addDto.ModuleName,
-		FunctionName: addDto.FunctionName,
-		ParamName:    addDto.ParamName,
-		MenuParentId: addDto.MenuParentId,
+		TableName:        addDto.TableName,
+		TableDescription: addDto.TableDescription,
+		ModelName:        addDto.ModelName,
+		BusinessName:     addDto.BusinessName,
+		ModuleName:       addDto.ModuleName,
+		FunctionName:     addDto.FunctionName,
+		ParamName:        addDto.ParamName,
+		MenuParentId:     addDto.MenuParentId,
 	}
 	err := global.DB.Create(genTable).Error
 
 	//添加表字段
-	AddColumn(addDto.TableName, genTable.Id)
+	s.AddColumn(addDto.TableName, genTable.Id)
 
 	return err
 }
@@ -57,14 +58,14 @@ func (s *SysGenTableService) Add(addDto dto.SysGenTableAddDto) error {
 // Update 更新业务表
 func (s *SysGenTableService) Update(updateDto dto.SysGenTableUpdateDto) error {
 	err := global.DB.Model(&model.SysGenTable{}).Where("id = ?", updateDto.Id).Updates(map[string]interface{}{
-		"TableName":    updateDto.TableName,
-		"TableComment": updateDto.TableComment,
-		"ModelName":    updateDto.ModelName,
-		"BusinessName": updateDto.BusinessName,
-		"ModuleName":   updateDto.ModuleName,
-		"FunctionName": updateDto.FunctionName,
-		"ParamName":    updateDto.ParamName,
-		"MenuParentId": updateDto.MenuParentId,
+		"TableName":        updateDto.TableName,
+		"TableDescription": updateDto.TableDescription,
+		"ModelName":        updateDto.ModelName,
+		"BusinessName":     updateDto.BusinessName,
+		"ModuleName":       updateDto.ModuleName,
+		"FunctionName":     updateDto.FunctionName,
+		"ParamName":        updateDto.ParamName,
+		"MenuParentId":     updateDto.MenuParentId,
 	}).Error
 	return err
 }
@@ -77,75 +78,77 @@ func (s *SysGenTableService) Delete(id int64) error {
 
 // Detail 获取业务表详情
 func (s *SysGenTableService) Detail(id int64) (obj dto.SysGenTableVo, err error) {
-	err = global.DB.Model(&model.SysGenTable{}).Where("id = ?", id).Find(&obj).Error
+	err = global.DB.Model(&model.SysGenTable{}).Where("id = ?", id).Scan(&obj).Error
+
+	var columnList []dto.SysGenTableColumnVo
+	global.DB.Model(&model.SysGenTableColumn{}).Where("table_id = ?", id).Scan(&columnList)
+	obj.ColumnList = columnList
 	return obj, err
 }
 
 // GetTableList 获取表列表
-func (s *SysGenTableService) GetTableList() (data []dto.TableInfoVo, err error) {
-	var tables []dto.TableInfoVo
-	sql := `
-		SELECT 
-			table_name AS TableName,
-			table_comment AS TableComment
-		FROM 
-			information_schema.TABLES 
-		WHERE 
-			table_schema = (SELECT DATABASE()) AND table_name NOT IN (select table_name from sys_gen_table)`
-	err = global.DB.Raw(sql).Find(&tables).Error
+func (s *SysGenTableService) GetTableList() (genTables []dto.TableInfoVo, err error) {
 
-	for i := 0; i < len(tables); i++ {
-		tables[i].ModelName = utils.SnakeToUpperCamelCase(tables[i].TableName)
-		tables[i].BusinessName = strings.Split(tables[i].TableName, "_")[0]
-		tables[i].ModuleName = GetModuleName(tables[i].TableName)
-		tables[i].FunctionName = GetFunctionName(tables[i].TableComment)
-		tables[i].ParamName = utils.SnakeToLowerCamelCase(tables[i].TableName)
+	//获取表信息
+	tableInfos, err := tools.Gorm.Database().GetTableInfoList()
+	if err != nil {
+		return nil, err
 	}
-	return tables, err
+
+	for i := 0; i < len(tableInfos); i++ {
+
+		//表名称
+		var tableName = tableInfos[i].TableName
+		if tableInfos[i].SchemaName != "" {
+			//pgsql 表名方式
+			tableName = tableInfos[i].SchemaName + "." + tableInfos[i].TableName
+		}
+
+		//业务名称
+		var businessName = strings.Split(tableInfos[i].TableName, "_")[0]
+		if businessName == "sys" {
+			businessName = "system"
+		}
+
+		genTables = append(genTables, dto.TableInfoVo{
+			TableName:        tableName,
+			TableDescription: tableInfos[i].TableDescription,
+			ModelName:        utils.SnakeToUpperCamelCase(tableInfos[i].TableName),
+			BusinessName:     businessName,
+			ModuleName:       s.GetModuleName(tableInfos[i].TableName),
+			FunctionName:     s.GetFunctionName(tableInfos[i].TableDescription),
+			ParamName:        utils.SnakeToLowerCamelCase(tableInfos[i].TableName),
+		})
+	}
+	return genTables, err
 }
 
 // GetFunctionName 获取功能名称 例如：用户信息表=>用户信息
-func GetFunctionName(tableComment string) string {
-	if strings.Contains(tableComment, "表") {
-		tableComment = strings.Replace(tableComment, "表", "", -1)
+func (s *SysGenTableService) GetFunctionName(tableDescription string) string {
+	if strings.Contains(tableDescription, "表") {
+		tableDescription = strings.Replace(tableDescription, "表", "", -1)
 	}
-	return tableComment
+	return tableDescription
 }
 
 // GetModuleName 获取业务名称 例如：sys_user=>user
-func GetModuleName(tableName string) string {
-	var nameArr []string
-	nameList := strings.Split(tableName, "_")
+func (s *SysGenTableService) GetModuleName(tableName string) string {
 
-	//这边可以进行简化
-	//nameList := strings.Split(tableName, "_")[1..]
+	nameList := strings.Split(tableName, "_")[1:]
 
-	for i := 1; i < len(nameList); i++ {
-		nameArr = append(nameArr, nameList[i])
-	}
-	snakeCase := strings.Join(nameArr, "_")
+	snakeCase := strings.Join(nameList, "_")
+
 	return utils.SnakeToLowerCamelCase(snakeCase)
 }
 
 // AddColumn 导入表字段
-func AddColumn(tableName string, tableId int64) error {
+func (s *SysGenTableService) AddColumn(tableName string, tableId int64) error {
 
-	var columnInfos []dto.DbTableColumnInfoVo
-	columnSql := `		
-	SELECT
-		table_name AS TableName,
-		column_name AS ColumnName,
-		column_comment AS ColumnComment,
-		data_type AS ColumnType,
-		( CASE WHEN column_key = 'PRI' THEN '1' ELSE '0' END ) AS IsPk 
-	FROM
-		information_schema.COLUMNS 
-	WHERE
-		table_schema = (SELECT DATABASE()) AND table_name = ? ORDER BY TABLE_NAME,ORDINAL_POSITION`
-	err := global.DB.Raw(columnSql, tableName).Scan(&columnInfos).Error
+	columnInfos, err := tools.Gorm.Database().GetColumnInfoList(tableName)
 	if err != nil {
 		return err
 	}
+
 	//导入表数据
 	var columns []model.SysGenTableColumn
 	for _, column := range columnInfos {
@@ -157,33 +160,37 @@ func AddColumn(tableName string, tableId int64) error {
 		}
 
 		//代码类型
-		codeType := utils.GetGoType(column.ColumnType)
+		var codeType = ""
+		if strings.Contains(column.ColumnName, "is_") {
+			codeType = "bool"
+		} else {
+			codeType = utils.GetGoType(column.ColumnType)
+		}
 
 		//组件类型
 		var componentType = consts.ComponentTypeInput
-		if column.ColumnType == "int" {
-			componentType = consts.ComponentTypeInputNumber
-		} else if strings.Contains(column.ColumnName, "is_") {
-			codeType = "bool"
+		if codeType == "bool" {
 			componentType = consts.ComponentTypeSwitch
-		} else if column.ColumnType == "datetime" || column.ColumnType == "timestamp" {
+		} else if codeType == "time.Time" {
 			componentType = consts.ComponentTypeDateTimePicker
+		} else if codeType == "int" {
+			componentType = consts.ComponentTypeInputNumber
 		}
 
 		columns = append(columns, model.SysGenTableColumn{
-			TableId:       tableId,
-			ColumnName:    column.ColumnName,
-			ColumnComment: column.ColumnComment,
-			ColumnType:    column.ColumnType,
-			ParamName:     utils.SnakeToLowerCamelCase(column.ColumnName),
-			CodeField:     utils.SnakeToUpperCamelCase(column.ColumnName),
-			CodeType:      codeType,
-			IsPk:          column.IsPk,
-			IsEdit:        isEdit,
-			IsList:        true,
-			IsQuery:       false,
-			QueryMethod:   "==",
-			ComponentType: componentType,
+			TableId:           tableId,
+			ColumnName:        column.ColumnName,
+			ColumnDescription: column.ColumnDescription,
+			ColumnType:        column.ColumnType,
+			ParamName:         utils.SnakeToLowerCamelCase(column.ColumnName),
+			CodeField:         utils.SnakeToUpperCamelCase(column.ColumnName),
+			CodeType:          codeType,
+			IsPk:              column.IsPk,
+			IsEdit:            isEdit,
+			IsList:            true,
+			IsQuery:           false,
+			QueryMethod:       "==",
+			ComponentType:     componentType,
 		})
 	}
 	err = global.DB.Create(&columns).Error
@@ -193,66 +200,37 @@ func AddColumn(tableName string, tableId int64) error {
 // PreviewCode 预览代码
 func (s *SysGenTableService) PreviewCode(tableId int64) (vos []dto.PreviewCodeVo, err error) {
 
-	table := GetTableDetail(tableId)
+	table, err := s.Detail(tableId)
 
-	//api文件
-	apiTemp, err := template.ParseFiles("resource/template/api.go.template")
-	if err != nil {
-		return nil, err
-	}
-	var apiContent bytes.Buffer
-	err = apiTemp.Execute(&apiContent, table)
-	vos = append(vos, dto.PreviewCodeVo{FileName: "api.go", FileContent: apiContent.String()})
+	templatePaths := GetTemplatePath()
 
-	//dto文件
-	dtoTemp, err := template.ParseFiles("resource/template/dto.go.template")
-	if err != nil {
-		return nil, err
-	}
-	var dtoContent bytes.Buffer
-	err = dtoTemp.Execute(&dtoContent, table)
-	vos = append(vos, dto.PreviewCodeVo{FileName: "dto.go", FileContent: dtoContent.String()})
+	for _, templatePath := range templatePaths {
+		temp, err := template.ParseFiles(templatePath)
+		if err != nil {
+			return nil, err
+		}
+		var apiContent bytes.Buffer
+		err = temp.Execute(&apiContent, table)
+		var fileName = path.Base(templatePath)
 
-	//model文件
-	modelTemp, err := template.ParseFiles("resource/template/model.go.template")
-	if err != nil {
-		return nil, err
+		vos = append(vos, dto.PreviewCodeVo{FileName: strings.Replace(fileName, ".template", "", -1), FileContent: apiContent.String()})
 	}
-	var modelContent bytes.Buffer
-	err = modelTemp.Execute(&modelContent, table)
-	fmt.Println(modelContent.String())
-	vos = append(vos, dto.PreviewCodeVo{FileName: "model.go", FileContent: modelContent.String()})
-
-	//router文件
-	routerTemp, err := template.ParseFiles("resource/template/router.go.template")
-	if err != nil {
-		return nil, err
-	}
-	var routerContent bytes.Buffer
-	err = routerTemp.Execute(&routerContent, table)
-	vos = append(vos, dto.PreviewCodeVo{FileName: "router.go", FileContent: routerContent.String()})
-
-	//service文件
-	serviceTemp, err := template.ParseFiles("resource/template/service.go.template")
-	if err != nil {
-		return nil, err
-	}
-	var serviceContent bytes.Buffer
-	err = serviceTemp.Execute(&serviceContent, table)
-	vos = append(vos, dto.PreviewCodeVo{FileName: "service.go", FileContent: serviceContent.String()})
 
 	return vos, err
 }
 
-// GetTableDetail 表数据详情
-func GetTableDetail(tableId int64) (table dto.TableInfoVo) {
-	global.DB.Model(model.SysGenTable{Id: tableId}).Scan(&table)
-
-	var columnList *[]model.SysGenTableColumn
-	global.DB.Model(model.SysGenTableColumn{TableId: tableId}).Scan(&columnList)
-	table.ParamName = utils.SnakeToLowerCamelCase(table.TableName)
-	//table.ColumnList = columnList
-	fmt.Println(table)
-	return table
-
+// GetTemplatePath 获取模板文件路径
+func GetTemplatePath() []string {
+	templatePath := []string{
+		"resource/template/admin/model.go.template",
+		"resource/template/admin/api.go.template",
+		"resource/template/admin/service.go.template",
+		"resource/template/admin/router.go.template",
+		"resource/template/admin/dto.go.template",
+		"resource/template/admin/menu.sql.template",
+		"resource/template/web/index.vue.template",
+		"resource/template/web/editDialog.vue.template",
+		"resource/template/web/api.ts.template",
+	}
+	return templatePath
 }

@@ -1,0 +1,22 @@
+package router
+
+import (
+	"go-fast-admin/server/app/admin/api"
+	"github.com/gin-gonic/gin"
+)
+
+type {{.ModelName}}Router struct{}
+
+// Init{{.ModelName}}PrivateRouter 初始化{{.FunctionName}}路由
+func ({{.ModuleName}}Router  *{{.ModelName}}Router) Init{{.ModelName}}PrivateRouter(routerGroup *gin.RouterGroup) {
+	var {{.ModuleName}}Api = api.{{.ModelName}}Api{}
+	{{.ModuleName}}Router := routerGroup.Group("{{.BusinessName}}/{{.ModuleName}}")
+	{
+		{{.ModuleName}}Router.GET("page", {{.ModuleName}}Api.Page)      // {{.FunctionName}}分页查询
+		{{.ModuleName}}Router.GET("detail", {{.ModuleName}}Api.Detail)  // {{.FunctionName}}详情
+		{{.ModuleName}}Router.GET("list", {{.ModuleName}}Api.List)      // {{.FunctionName}}列表
+		{{.ModuleName}}Router.POST("add", {{.ModuleName}}Api.Add)       // 添加{{.FunctionName}}
+		{{.ModuleName}}Router.POST("update", {{.ModuleName}}Api.Update) // 更新{{.FunctionName}}
+		{{.ModuleName}}Router.POST("delete", {{.ModuleName}}Api.Delete) // 删除{{.FunctionName}}
+	}
+}

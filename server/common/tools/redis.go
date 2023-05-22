@@ -8,9 +8,9 @@ import (
 	"time"
 )
 
-type RedisUtil struct{}
+type RedisTool struct{}
 
-var Redis = new(RedisUtil)
+var Redis = new(RedisTool)
 var (
 	ctx = context.Background()
 	rdb *redis.Client
@@ -33,14 +33,14 @@ func InitRedis() *redis.Client {
 }
 
 // Set 设置缓存
-func (*RedisUtil) Set(key string, value interface{}, expiration time.Duration) {
+func (*RedisTool) Set(key string, value interface{}, expiration time.Duration) {
 	//序列化
 	data, _ := json.Marshal(value)
 	rdb.Set(ctx, key, string(data), expiration)
 }
 
 // Get 获取缓存
-func (*RedisUtil) Get(key string, value interface{}) {
+func (*RedisTool) Get(key string, value interface{}) {
 	str, _ := rdb.Get(ctx, key).Result()
 	//反序列化
 	json.Unmarshal([]byte(str), &value)
@@ -48,12 +48,12 @@ func (*RedisUtil) Get(key string, value interface{}) {
 }
 
 // Del 删除缓存
-func (*RedisUtil) Del(key string) {
+func (*RedisTool) Del(key string) {
 	rdb.Del(ctx, key)
 }
 
 // DelByPattern 模糊删除缓存
-func (*RedisUtil) DelByPattern(pattern string) {
+func (*RedisTool) DelByPattern(pattern string) {
 	keys, _ := rdb.Keys(ctx, pattern+"*").Result()
 	for i := 0; i < len(keys); i++ {
 		rdb.Del(ctx, keys[i])

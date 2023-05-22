@@ -1,100 +1,79 @@
 import request from '/@/utils/request';
 
 /**
- * 代码生成（表）接口
+ * {{.FunctionName}}
  */
- class GenTableApi {
+ class ConfigApi {
 	/**
-	 * 代码生成查询
+	 * {{.FunctionName}}查询
 	 * @param parameter 
 	 * @returns 
 	 */
 	query(parameter:any) {
 		return request({
-			url: '/system/genTable/query',
+			url: '/{{.BusinessName}}/{{.ModuleName}}/query',
 			method: 'get',
 			params: parameter
 		});
 	}
 	/**
-	 * 新增代码生成
+	 * 新增{{.FunctionName}}
 	 * @param parameter 
 	 * @returns 
 	 */
 	 add(parameter:any) {
 		return request({
-			url: '/system/genTable/add',
+			url: '/{{.BusinessName}}/{{.ModuleName}}/add',
 			method: 'post',
 			data: parameter
 		});
 	}
 	/**
-	 * 更新代码生成
+	 * 更新{{.FunctionName}}
 	 * @param parameter 
 	 * @returns 
 	 */
 	 update(parameter:any) {
 		return request({
-			url: '/system/genTable/update',
+			url: '/{{.BusinessName}}/{{.ModuleName}}/update',
 			method: 'post',
 			data: parameter
 		});
 	}
 	/**
-	 * 删除代码生成
+	 * 删除{{.FunctionName}}
 	 * @param parameter 
 	 * @returns 
 	 */
 	 delete(parameter:any) {
 		return request({
-			url: '/system/genTable/delete',
+			url: '/{{.BusinessName}}/{{.ModuleName}}/delete',
 			method: 'post',
 			data: parameter
 		});
 	}
 	/**
-	 * 代码生成详情
+	 * {{.FunctionName}}详情
 	 * @param parameter 
 	 * @returns 
 	 */
 	 detail(parameter:any) {
 		return request({
-			url: '/system/genTable/detail',
+			url: '/{{.BusinessName}}/{{.ModuleName}}/detail',
 			method: 'get',
 			params: parameter
 		});
 	}
 	/**
-	 * 代码生成列表
+	 * {{.FunctionName}}列表
 	 * @returns 
 	 */
 	 list() {
 		return request({
-			url: '/system/genTable/list',
+			url: '/{{.BusinessName}}/{{.ModuleName}}/list',
 			method: 'get',
-		});
-	}
-	/**
-	 * 获取表列表
-	 * @returns 
-	 */
-	tableList() {
-		return request({
-			url: '/system/genTable/tableList',
-			method: 'get',
-		});
-	}
-	/**
-	 * 获取表列表
-	 * @returns 
-	 */
-	previewCode(parameter:any) {
-		return request({
-			url: '/system/genTable/previewCode',
-			method: 'get',
-			params: parameter
 		});
 	}
 }
 
-export default new GenTableApi()
+export default new ConfigApi()

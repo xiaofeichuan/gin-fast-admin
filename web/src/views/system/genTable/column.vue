@@ -2,10 +2,10 @@
 	<div class="layout-padding">
 		<el-card shadow="hover">
 			<el-table :data="state.tableData.data" v-loading="state.tableData.loading" >
-				<el-table-column prop="id" label="编号" width="60" />
-				<el-table-column prop="columnComment" label="描述" show-overflow-tooltip>
+				<!-- <el-table-column prop="id" label="编号" width="60" /> -->
+				<el-table-column prop="columnDescription" label="描述" show-overflow-tooltip>
 					<template #default="scope">
-						<el-input v-model="scope.row.columnComment" placeholder="字段描述" clearable></el-input>
+						<el-input v-model="scope.row.columnDescription" placeholder="字段描述" clearable></el-input>
 					</template>
 				</el-table-column>
 				<el-table-column prop="columnName" label="字段" show-overflow-tooltip></el-table-column>

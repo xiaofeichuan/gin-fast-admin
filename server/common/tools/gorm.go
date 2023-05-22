@@ -1,29 +1,46 @@
 package tools
 
 import (
-	"fmt"
 	"go-fast-admin/server/global"
-	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
-	"gorm.io/gorm/schema"
 )
 
-// InitDB 初始化数据库
-func InitDB() *gorm.DB {
+type GormTool struct{}
 
-	db, err := gorm.Open(mysql.New(mysql.Config{
-		DSN:               global.CONFIG.Database.Default, // DSN data source name
-		DefaultStringSize: 256,                            // string 类型字段的默认长度
-	}), &gorm.Config{
-		NamingStrategy: schema.NamingStrategy{
-			SingularTable: true, // 使用单数表名
-		},
-		Logger: logger.Default.LogMode(logger.Info),
-	})
+var Gorm = new(GormTool)
 
-	if err != nil {
-		fmt.Println("连接数据库出现错误：" + err.Error())
+type Database interface {
+	// InitDB 初始化数据库
+	InitDB() *gorm.DB
+
+	// GetTableInfoList 获取表信息
+	GetTableInfoList() (list []DBTableInfo, err error)
+
+	// GetColumnInfoList 获取表信息
+	GetColumnInfoList(tableName string) (list []DBColumnInfo, err error)
+}
+
+func (gt *GormTool) Database() Database {
+	switch global.CONFIG.Database.Type {
+	case "mysql":
+		return GormMySQL
+	case "pgsql":
+		return GormPgSQL
+	default:
+		return GormMySQL
 	}
-	return db
+}
+
+type DBTableInfo struct {
+	TableName        string `json:"tableName"`        //表名称
+	TableDescription string `json:"tableDescription"` //表描述
+	SchemaName       string `json:"schemaName"`       //pgsql架构名称
+}
+
+type DBColumnInfo struct {
+	TableName         string `json:"tableName"`         //表名称
+	ColumnName        string `json:"columnName"`        //字段名称
+	ColumnDescription string `json:"columnDescription"` //字段描述
+	ColumnType        string `json:"columnType"`        //字段类型
+	IsPk              bool   `json:"isPk"`              //是否主键
 }

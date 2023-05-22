@@ -4,9 +4,9 @@
 			<el-table :data="state.tableData.data" v-loading="state.tableData.loading" max-height="500">
 				<el-table-column prop="id" label="编号" width="60" />
 				<el-table-column prop="columnName" label="字段名" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="columnComment" label="字段描述" show-overflow-tooltip>
+				<el-table-column prop="columnDescription" label="字段描述" show-overflow-tooltip>
 					<template #default="scope">
-						<el-input v-model="scope.row.columnComment" placeholder="请输入模块名称" clearable></el-input>
+						<el-input v-model="scope.row.columnDescription" placeholder="请输入模块名称" clearable></el-input>
 					</template>
 				</el-table-column>
 				<el-table-column prop="columnType" label="字段类型" show-overflow-tooltip></el-table-column>
@@ -105,6 +105,7 @@ const openDialog = (row: any) => {
 	handleQuery(row.id);
 	state.dialog.isShowDialog = true;
 };
+
 // 初始化表格数据
 const handleQuery = (tableId:number) => {
 	state.tableData.loading = true;
@@ -115,6 +116,7 @@ const handleQuery = (tableId:number) => {
 		}
 	});
 };
+
 // 关闭弹窗
 const closeDialog = () => {
 	state.dialog.isShowDialog = false;

@@ -9,9 +9,14 @@ import ElementPlus from 'element-plus';
 import 'element-plus/dist/index.css';
 import '/@/theme/index.scss';
 
+// highlightjs
+import "highlight.js/lib/common";
+import 'highlight.js/styles/atom-one-dark.css'
+import hljsVuePlugin from "@highlightjs/vue-plugin";
+
 const app = createApp(App);
 
 directive(app);
 other.elSvg(app);
 
-app.use(pinia).use(router).use(ElementPlus).mount('#app');
+app.use(pinia).use(router).use(ElementPlus).use(hljsVuePlugin).mount('#app');

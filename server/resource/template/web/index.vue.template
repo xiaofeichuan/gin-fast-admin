@@ -2,9 +2,23 @@
 	<div class="layout-padding">
 		<el-card shadow="hover" :body-style="{ paddingBottom: 0 }">
 			<el-form :model="state.tableData.param" ref="queryFormRef" :inline="true" label-width="70px">
-				<el-form-item label="配置名称" prop="roleName">
-					<el-input v-model="state.tableData.param.roleName" placeholder="请输入配置名称" style="width: 200px" @keyup.enter="handleQuery" clearable />
+{{- range $index, $item := .ColumnList }}
+    {{- if $item.IsQuery }}
+        {{- if eq $item.ComponentType "Select" }}
+				<el-form-item label="{{$item.ColumnDescription}}" prop="{{$item.ParamName}}">
+					<el-select v-model="state.tableData.param.{{$item.ParamName}}" placeholder="请选择" clearable>
+						<el-option v-for="item in useDictData().getDictItem('{{$item.DictCode}}')" :key="item.dictItemValue"
+							:label="item.dictItemName" :value="item.dictItemValue">
+						</el-option>
+					</el-select>
 				</el-form-item>
+        {{- else }}
+				<el-form-item label="{{$item.ColumnDescription}}" prop="{{$item.ParamName}}">
+					<el-input v-model="state.tableData.param.{{$item.ParamName}}" placeholder="请输入{{$item.ColumnDescription}}" style="width: 200px" @keyup.enter="handleQuery" clearable />
+				</el-form-item>
+        {{- end }}
+    {{- end }}
+{{- end }}
 				<el-form-item>
 					<el-button @click="resetQueryForm()">
 						<el-icon>
@@ -23,7 +37,7 @@
 		</el-card>
 		<el-card shadow="hover" style="margin-top: 10px">
 			<div>
-				<el-button type="primary" @click="openEditDialog()" v-permission="['system_config_add']" plain>
+				<el-button type="primary" @click="openEditDialog()" v-permission="['{{.BusinessName}}_{{.ModuleName}}_add']" plain>
 					<el-icon>
 						<ele-Plus />
 					</el-icon>
@@ -31,22 +45,28 @@
 				</el-button>
 			</div>
 			<el-table :data="state.tableData.data" v-loading="state.tableData.loading">
+{{- range $index, $item := .ColumnList }}
+    {{- if $item.IsList }}
+        {{- if eq $item.ColumnName "id" }}
 				<el-table-column prop="id" label="编号" width="60" />
-				<el-table-column prop="configName" label="配置名称" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="configKey" label="配置键" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="configValue" label="配置值" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="status" label="配置状态" show-overflow-tooltip>
+        {{- else if eq $item.ComponentType "Select" }}
+				<el-table-column prop="{{$item.ParamName}}" label="{{$item.ColumnDescription}}" show-overflow-tooltip>
 					<template #default="scope">
-						<el-tag v-if="scope.row.status == 0">启用</el-tag>
-						<el-tag type="info" v-else>禁用</el-tag>
+						<el-select v-model="scope.row.{{$item.ParamName}}" placeholder="请选择" clearable>
+							<el-option v-for="item in useDictData().getDictItem('{{$item.DictCode}}')" :key="item.dictItemValue" :label="item.dictItemName" :value="item.dictItemValue">
+							</el-option>
+						</el-select>
 					</template>
 				</el-table-column>
-				<el-table-column prop="remark" label="配置描述" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="createdAt" label="创建时间" show-overflow-tooltip></el-table-column>
+        {{- else }}
+				<el-table-column prop="{{$item.ParamName}}" label="{{$item.ColumnDescription}}" show-overflow-tooltip></el-table-column>
+        {{- end }}
+    {{- end }}
+{{- end }}
 				<el-table-column label="操作" width="100">
 					<template #default="scope">
-						<el-button text type="primary" @click="openEditDialog(scope.row)" v-permission="['system_config_update']">修改</el-button>
-						<el-button text type="primary" @click="handleDel(scope.row)" v-permission="['system_config_delete']">删除</el-button>
+						<el-button text type="primary" @click="openEditDialog(scope.row)" v-permission="['{{.BusinessName}}_{{.ModuleName}}_update']">修改</el-button>
+						<el-button text type="primary" @click="handleDel(scope.row)" v-permission="['{{.BusinessName}}_{{.ModuleName}}_delete']">删除</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -70,7 +90,7 @@
 <script setup lang="ts" name="systemRole">
 import { defineAsyncComponent, reactive, onMounted, ref } from 'vue';
 import { ElMessageBox, ElMessage } from 'element-plus';
-import configApi from '/@/api/system/config';
+import {{.ModuleName}}Api from '/@/api/{{.BusinessName}}/{{.ModuleName}}';
 
 // 引入组件
 const EditDialog = defineAsyncComponent(() => import('./component/editDialog.vue'));
@@ -86,7 +106,11 @@ const state = reactive({
 		param: {
 			pageNum: 1,
 			pageSize: 10,
-			roleName: undefined,
+{{- range $index, $item := .ColumnList }}
+    {{- if $item.IsQuery }}
+			{{$item.ParamName}}: undefined,
+    {{- end }}
+{{- end }}
 		},
 	},
 });
@@ -105,7 +129,7 @@ const resetQueryForm = () => {
 // 初始化表格数据
 const handleQuery = () => {
 	state.tableData.loading = true;
-	configApi.query(state.tableData.param).then((res) => {
+	{{.ModuleName}}Api.query(state.tableData.param).then((res) => {
 		if (res.success) {
 			state.tableData.data = res.data.list;
 			state.tableData.total = res.data.totalCount;
@@ -113,7 +137,6 @@ const handleQuery = () => {
 		}
 	});
 };
-
 // 打开编辑弹窗
 const openEditDialog = (row?: any) => {
 	editFormRef.value.openDialog(row);
@@ -121,13 +144,13 @@ const openEditDialog = (row?: any) => {
 
 // 删除
 const handleDel = (row: any) => {
-	ElMessageBox.confirm(`此操作将永久删除配置名称：“${row.configName}”?`, '提示', {
+	ElMessageBox.confirm(`是否删除此记录?`, '提示', {
 		confirmButtonText: '确认',
 		cancelButtonText: '取消',
 		type: 'warning',
 	})
 		.then(() => {
-			configApi.delete({ id: row.id }).then((res) => {
+			{{.ModuleName}}Api.delete({ id: row.id }).then((res) => {
 				if (res.success) {
 					handleQuery();
 					ElMessage.success('删除成功');

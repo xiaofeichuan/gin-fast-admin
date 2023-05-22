@@ -2,14 +2,14 @@
 	<el-dialog :title="state.dialog.title" v-model="state.dialog.isShowDialog" width="769px" @close="closeDialog">
 		<el-form ref="dataFormRef" :model="state.dataForm" :rules="state.rules" size="default" label-width="80px">
 			<el-row :gutter="35">
-				<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="mb20">
+				<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
 					<el-form-item label="上级菜单" prop="parentId">
 						<!-- <el-cascader :options="state.menuOptions" v-model="state.dataForm.parentId"
 							:props="{ checkStrictly: true, emitPath: false }" class="w100" clearable /> -->
 						<el-tree-select v-model="state.dataForm.parentId" :data="state.menuOptions"  class="w100" :check-strictly="true"/>
 					</el-form-item>
 				</el-col>
-				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
+				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
 					<el-form-item label="菜单类型" prop="menuType">
 						<el-radio-group v-model="state.dataForm.menuType">
 							<!-- <el-radio :label="0">目录</el-radio>
@@ -20,49 +20,49 @@
 						</el-radio-group>
 					</el-form-item>
 				</el-col>
-				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
+				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
 					<el-form-item label="菜单状态" prop="status">
 						<el-switch v-model="state.dataForm.status" :active-value="0" :inactive-value="1" inline-prompt
 							active-text="启用" inactive-text="禁用"></el-switch>
 					</el-form-item>
 				</el-col>
-				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
+				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
 					<el-form-item label="菜单名称" prop="menuName">
 						<el-input v-model="state.dataForm.menuName" placeholder="请输入菜单名称" clearable></el-input>
 					</el-form-item>
 				</el-col>
-				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
+				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
 					<el-form-item label="菜单排序" prop="sort">
 						<el-input-number v-model="state.dataForm.sort" controls-position="right" placeholder="请输入排序"
 							class="w100" />
 					</el-form-item>
 				</el-col>
 				<template v-if="state.dataForm.menuType === 0 || state.dataForm.menuType === 1">
-					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
+					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
 						<el-form-item label="菜单图标">
 							<IconSelector placeholder="请选择菜单图标" v-model="state.dataForm.icon" />
 						</el-form-item>
 					</el-col>
-					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
+					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
 						<el-form-item label="路由地址" prop="path">
 							<el-input v-model="state.dataForm.path" placeholder="请输入路由地址" clearable></el-input>
 						</el-form-item>
 					</el-col>
 					<template v-if="state.dataForm.menuType === 1">
-						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
+						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
 							<el-form-item label="链接地址" prop="isLink">
 								<el-input v-model="state.dataForm.link" placeholder="请输入链接地址（如：http:baidu.com）" clearable
 									:disabled="!state.dataForm.isLink">
 								</el-input>
 							</el-form-item>
 						</el-col>
-						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
+						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
 							<el-form-item label="组件路径" prop="component">
 								<el-input v-model="state.dataForm.component" placeholder="请输入组件路径" clearable></el-input>
 							</el-form-item>
 						</el-col>
 
-						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
+						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
 							<el-form-item label="是否外链" prop="isLink">
 								<el-radio-group v-model="state.dataForm.isLink" :disabled="state.dataForm.isIframe">
 									<el-radio :label="true">是</el-radio>
@@ -70,7 +70,7 @@
 								</el-radio-group>
 							</el-form-item>
 						</el-col>
-						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
+						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
 							<el-form-item label="是否内嵌" prop="isIframe">
 								<el-radio-group v-model="state.dataForm.isIframe" @change="onSelectIframeChange">
 									<el-radio :label="true">是</el-radio>
@@ -78,7 +78,7 @@
 								</el-radio-group>
 							</el-form-item>
 						</el-col>
-						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
+						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
 							<el-form-item label="页面缓存" prop="isCache">
 								<el-radio-group v-model="state.dataForm.isCache">
 									<el-radio :label="true">缓存</el-radio>
@@ -86,7 +86,7 @@
 								</el-radio-group>
 							</el-form-item>
 						</el-col>
-						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
+						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
 							<el-form-item label="是否固定" prop="isAffix">
 								<el-radio-group v-model="state.dataForm.isAffix">
 									<el-radio :label="true">固定</el-radio>
@@ -95,7 +95,7 @@
 							</el-form-item>
 						</el-col>
 					</template>
-					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
+					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
 						<el-form-item label="是否隐藏" prop="isHide">
 							<el-radio-group v-model="state.dataForm.isHide">
 								<el-radio :label="true">隐藏</el-radio>
@@ -105,12 +105,12 @@
 					</el-col>
 				</template>
 				<template v-if="state.dataForm.menuType === 2">
-					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
+					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
 						<el-form-item label="权限标识" prop="permission">
 							<el-input v-model="state.dataForm.permission" placeholder="请输入权限标识" clearable></el-input>
 						</el-form-item>
 					</el-col>
-					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
+					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
 						<el-form-item label="请求方式" prop="requestMethod">
 							<el-select v-model="state.dataForm.requestMethod" placeholder="请选择请求方式" clearable class="w100">
 								<el-option label="POST" value="POST"></el-option>

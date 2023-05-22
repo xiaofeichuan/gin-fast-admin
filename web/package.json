@@ -11,9 +11,11 @@
 	},
 	"dependencies": {
 		"@element-plus/icons-vue": "^2.0.10",
+		"@highlightjs/vue-plugin": "^2.1.0",
 		"axios": "^1.2.1",
 		"echarts": "^5.4.1",
 		"element-plus": "^2.3.2",
+		"highlight.js": "^11.8.0",
 		"js-cookie": "^3.0.1",
 		"mitt": "^3.0.0",
 		"nprogress": "^0.2.0",

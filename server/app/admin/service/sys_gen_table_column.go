@@ -12,19 +12,19 @@ type SysGenTableColumnService struct{}
 func (s *SysGenTableColumnService) Update(updateDto []dto.SysGenTableColumnUpdateDto) {
 	for i := 0; i < len(updateDto); i++ {
 		global.DB.Model(&model.SysGenTableColumn{}).Where("id = ?", updateDto[i].Id).Updates(map[string]interface{}{
-			"ColumnName":    updateDto[i].ColumnName,
-			"ColumnComment": updateDto[i].ColumnComment,
-			"ColumnType":    updateDto[i].ColumnType,
-			"ParamName":     updateDto[i].ParamName,
-			"CodeField":     updateDto[i].CodeField,
-			"CodeType":      updateDto[i].CodeType,
-			"IsPk":          updateDto[i].IsPk,
-			"IsEdit":        updateDto[i].IsEdit,
-			"IsList":        updateDto[i].IsList,
-			"IsQuery":       updateDto[i].IsQuery,
-			"QueryMethod":   updateDto[i].QueryMethod,
-			"ComponentType": updateDto[i].ComponentType,
-			"DictCode":      updateDto[i].DictCode,
+			"ColumnName":        updateDto[i].ColumnName,
+			"ColumnDescription": updateDto[i].ColumnDescription,
+			"ColumnType":        updateDto[i].ColumnType,
+			"ParamName":         updateDto[i].ParamName,
+			"CodeField":         updateDto[i].CodeField,
+			"CodeType":          updateDto[i].CodeType,
+			"IsPk":              updateDto[i].IsPk,
+			"IsEdit":            updateDto[i].IsEdit,
+			"IsList":            updateDto[i].IsList,
+			"IsQuery":           updateDto[i].IsQuery,
+			"QueryMethod":       updateDto[i].QueryMethod,
+			"ComponentType":     updateDto[i].ComponentType,
+			"DictCode":          updateDto[i].DictCode,
 		})
 	}
 

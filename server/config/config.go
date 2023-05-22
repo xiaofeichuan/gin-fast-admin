@@ -16,7 +16,8 @@ type JwtConfig struct {
 }
 
 type DatabaseConfig struct {
-	Default string `yaml:"default"`
+	Type string `yaml:"type"`
+	DSN  string `yaml:"dsn"`
 }
 
 type RedisConfig struct {

@@ -5,8 +5,10 @@ jwt:
 
 # 数据库配置
 database:
+  # mysql/pgsql
+  type: 'mysql'
   # 默认数据库
-  default: 'root:123456@tcp(127.0.0.1:3306)/go_fast_admin?charset=utf8mb4&parseTime=True&loc=Local'
+  dsn: 'root:123456@tcp(127.0.0.1:3306)/go_fast_admin?charset=utf8mb4&parseTime=True&loc=Local'
 
 # redis配置
 redis:

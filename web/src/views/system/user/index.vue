@@ -102,7 +102,7 @@ const EditDialog = defineAsyncComponent(() => import('./component/editDialog.vue
 // 定义变量内容
 const queryFormRef = ref();
 const editFormRef = ref();
-const state = reactive<SysUserState>({
+const state = reactive({
 	tableData: {
 		data: [],
 		total: 0,

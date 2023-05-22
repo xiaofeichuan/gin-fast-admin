@@ -78,7 +78,7 @@ const EditDialog = defineAsyncComponent(() => import('./component/editDialog.vue
 // 定义变量内容
 const queryFormRef = ref();
 const editFormRef = ref();
-const state = reactive<SysRoleState>({
+const state = reactive({
 	tableData: {
 		data: [],
 		total: 0,
@@ -113,6 +113,7 @@ const handleQuery = () => {
 		}
 	});
 };
+
 // 打开编辑弹窗
 const openEditDialog = (row?: any) => {
 	editFormRef.value.openDialog(row);
@@ -135,11 +136,13 @@ const handleDel = (row: any) => {
 		})
 		.catch(() => {});
 };
+
 // 分页改变
 const handleSizeChange = (val: number) => {
 	state.tableData.param.pageSize = val;
 	handleQuery();
 };
+
 // 分页改变
 const handleCurrentChange = (val: number) => {
 	state.tableData.param.pageNum = val;

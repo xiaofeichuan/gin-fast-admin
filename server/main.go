@@ -27,7 +27,7 @@ func main() {
 	global.CONFIG = config.InitConfig()
 
 	//初始化数据库连接
-	global.DB = tools.InitDB()
+	global.DB = tools.Gorm.Database().InitDB()
 
 	//初始化路由
 	var routers = router.InitRouters()

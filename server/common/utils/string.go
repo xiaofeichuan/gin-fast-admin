@@ -48,38 +48,21 @@ func SnakeToLowerCamelCase(snakeCase string) string {
 // GetGoType 获取go的数据类型
 // mysql/pgsql数据类型=>go数据类型
 func GetGoType(columnType string) string {
-	switch columnType {
-	case "text":
-	case "varchar":
-	case "char":
-	case "longtext":
+	if columnType == "text" || columnType == "varchar" || columnType == "char" || columnType == "longtext" {
 		return "string"
-
-	case "tinyint":
-	case "int":
-	case "int2":
-	case "int4":
+	} else if columnType == "tinyint" || columnType == "int" || columnType == "int2" || columnType == "int4" {
 		return "int"
-
-	case "bigint":
-	case "int8":
-		return "int"
-
-	case "bool":
+	} else if columnType == "bigint" || columnType == "int8" {
+		return "int64"
+	} else if columnType == "bool" {
 		return "bool"
-
-	case "date":
-	case "datetime":
-	case "smalldatetime":
-	case "timestamp":
+	} else if columnType == "date" || columnType == "datetime" || columnType == "smalldatetime" || columnType == "timestamp" {
 		return "time.Time"
-
-	case "money":
-	case "numeric":
-	case "decimal":
+	} else if columnType == "money" || columnType == "numeric" || columnType == "decimal" {
 		return "decimal.Decimal"
+	} else {
+		return columnType
 	}
-	return columnType
 }
 
 // GetRoundNumber 获取随机数

@@ -72,10 +72,12 @@ const handleQuery = () => {
 		}
 	});
 };
+
 // 关闭弹窗
 const closeDialog = () => {
 	state.dialog.isShowDialog = false;
 };
+
 // 打开编辑弹窗
 const openEditDialog = (row?: any) => {
 	editFormRef.value.openDialog(state.dictData, row);
@@ -98,6 +100,7 @@ const handleDel = (row: any) => {
 		})
 		.catch(() => {});
 };
+
 // 暴露变量
 defineExpose({
 	openDialog,

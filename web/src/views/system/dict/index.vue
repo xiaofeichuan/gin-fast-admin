@@ -87,7 +87,7 @@ const ItemDialog = defineAsyncComponent(() => import('./component/itemDialog.vue
 const queryFormRef = ref();
 const editFormRef = ref();
 const itemFormRef = ref();
-const state = reactive<SysRoleState>({
+const state = reactive({
 	tableData: {
 		data: [],
 		total: 0,
@@ -122,6 +122,7 @@ const handleQuery = () => {
 		}
 	});
 };
+
 // 打开编辑弹窗
 const openEditDialog = (row?: any) => {
 	editFormRef.value.openDialog(row);
@@ -131,6 +132,7 @@ const openEditDialog = (row?: any) => {
 const openItemDialog = (row: any) => {
 	itemFormRef.value.openDialog(row);
 };
+
 // 删除
 const handleDel = (row: any) => {
 	ElMessageBox.confirm(`此操作将永久删除字典名称：“${row.dictName}”?`, '提示', {
@@ -148,11 +150,13 @@ const handleDel = (row: any) => {
 		})
 		.catch(() => {});
 };
+
 // 分页改变
 const handleSizeChange = (val: number) => {
 	state.tableData.param.pageSize = val;
 	handleQuery();
 };
+
 // 分页改变
 const handleCurrentChange = (val: number) => {
 	state.tableData.param.pageNum = val;

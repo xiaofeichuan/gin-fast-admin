@@ -2,35 +2,35 @@
 	<el-dialog :title="state.dialog.title" v-model="state.dialog.isShowDialog" width="750px" @close="closeDialog">
 		<el-form ref="dataFormRef" :model="state.dataForm" :rules="state.rules" size="default" label-width="90px">
 			<el-row :gutter="35">
-				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
+				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
 					<el-form-item label="角色名称" prop="roleName">
 						<el-input v-model="state.dataForm.roleName" placeholder="请输入角色名称" clearable></el-input>
 					</el-form-item>
 				</el-col>
-				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
+				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
 					<el-form-item label="角色代码" prop="roleCode">
 						<el-input v-model="state.dataForm.roleCode" placeholder="请输入角色代码" clearable></el-input>
 					</el-form-item>
 				</el-col>
-				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
+				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
 					<el-form-item label="排序" prop="sort">
 						<el-input-number v-model="state.dataForm.sort" :min="0" :max="999" controls-position="right"
 							placeholder="请输入排序" class="w100" />
 					</el-form-item>
 				</el-col>
-				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
+				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
 					<el-form-item label="角色状态" prop="status">
 						<el-switch v-model="state.dataForm.status" :active-value="0" :inactive-value="1" inline-prompt
 							active-text="启用" inactive-text="禁用"></el-switch>
 					</el-form-item>
 				</el-col>
-				<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="mb20">
+				<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
 					<el-form-item label="角色描述" prop="remark">
 						<el-input v-model="state.dataForm.remark" type="textarea" placeholder="请输入角色描述"
 							maxlength="150"></el-input>
 					</el-form-item>
 				</el-col>
-				<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="mb20">
+				<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
 					<el-form-item label="菜单权限">
 						<el-tree ref="roleMenuRef" :data="state.menuData" :props="state.menuProps" class="menu-data-tree"
 							node-key="id" show-checkbox />
@@ -101,6 +101,7 @@ const openDialog = (row: any) => {
 
 	state.dialog.isShowDialog = true;
 };
+
 // 关闭弹窗
 const closeDialog = () => {
 	state.dialog.isShowDialog = false;
@@ -109,6 +110,7 @@ const closeDialog = () => {
 	// 重置选项
 	roleMenuRef.value!.setCheckedKeys([], false);
 };
+
 // 提交
 const onSubmit = () => {
 	dataFormRef.value.validate(async (valid: boolean) => {
@@ -143,6 +145,7 @@ const onSubmit = () => {
 		}
 	});
 };
+
 // 获取菜单结构数据
 const getMenuData = () => {
 	menuApi.list().then((res) => {
@@ -151,6 +154,7 @@ const getMenuData = () => {
 		}
 	});
 };
+
 // 构建菜单树状（递归）
 const buildMenuTree = (menuData: any, parentId: number): any => {
 	var menuTree = [];
@@ -166,6 +170,7 @@ const buildMenuTree = (menuData: any, parentId: number): any => {
 	}
 	return menuTree;
 };
+
 // 获取角色详情
 const getRoleDetail = (roleId: number) => {
 	roleApi.detail({ id: roleId }).then((res) => {

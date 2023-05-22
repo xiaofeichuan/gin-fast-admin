@@ -12,15 +12,15 @@ import (
 type SystemRouter struct{}
 
 var (
-	sysAuthApi        = &api.SysAuthApi{}
-	sysConfigApi      = &api.SysConfigApi{}
-	sysDictApi        = &api.SysDictApi{}
-	sysDictItemApi    = &api.SysDictItemApi{}
-	sysMenuApi        = &api.SysMenuApi{}
-	sysUserApi        = &api.SysUserApi{}
-	sysRoleApi        = &api.SysRoleApi{}
-	sysGenTableApi    = &api.SysGenTableApi{}
-	sysGenTableColumn = &api.SysGenTableColumnApi{}
+	authApi           = &api.SysAuthApi{}
+	configApi         = &api.SysConfigApi{}
+	dictApi           = &api.SysDictApi{}
+	dictItemApi       = &api.SysDictItemApi{}
+	menuApi           = &api.SysMenuApi{}
+	userApi           = &api.SysUserApi{}
+	roleApi           = &api.SysRoleApi{}
+	genTableApi       = &api.SysGenTableApi{}
+	genTableColumnApi = &api.SysGenTableColumnApi{}
 )
 
 // InitPublicRouter 初始化公开路由
@@ -29,8 +29,8 @@ func (s *SystemRouter) InitPublicRouter(routerGroup *gin.RouterGroup) {
 	//权限
 	authRouter := routerGroup.Group("/system/auth")
 	{
-		authRouter.GET("captcha", sysAuthApi.GenerateCaptcha) // 生成验证码
-		authRouter.POST("login", sysAuthApi.Login)            // 用户登录
+		authRouter.GET("captcha", authApi.GenerateCaptcha) // 生成验证码
+		authRouter.POST("login", authApi.Login)            // 用户登录
 	}
 }
 
@@ -40,96 +40,96 @@ func (s *SystemRouter) InitPrivateRouter(routerGroup *gin.RouterGroup) {
 	//权限
 	authRouter := routerGroup.Group("/system/auth")
 	{
-		authRouter.GET("userInfo", sysAuthApi.GetUserInfo) // 获取用户信息
-		authRouter.GET("menu", sysAuthApi.GetAuthMenu)     // 获取用户菜单（树状）
-		authRouter.POST("updatePwd", sysAuthApi.UpdatePwd) // 更新密码
+		authRouter.GET("userInfo", authApi.GetUserInfo) // 获取用户信息
+		authRouter.GET("menu", authApi.GetAuthMenu)     // 获取用户菜单（树状）
+		authRouter.POST("updatePwd", authApi.UpdatePwd) // 更新密码
 	}
 
 	//用户
 	userRouter := routerGroup.Group("/system/user")
 	{
-		userRouter.GET("query", sysUserApi.Query)              // 用户分页查询
-		userRouter.POST("add", sysUserApi.Add)                 // 添加用户
-		userRouter.POST("update", sysUserApi.Update)           // 更新用户
-		userRouter.POST("delete", sysUserApi.Delete)           // 删除用户
-		userRouter.GET("detail", sysUserApi.Detail)            // 用户详情
-		userRouter.GET("list", sysUserApi.List)                // 用户列表
-		userRouter.POST("resetPwd", sysUserApi.ResetPwd)       // 重置密码
-		userRouter.POST("setStatus", sysUserApi.SetUserStatus) // 设置状态
+		userRouter.GET("query", userApi.Query)              // 用户分页查询
+		userRouter.POST("add", userApi.Add)                 // 添加用户
+		userRouter.POST("update", userApi.Update)           // 更新用户
+		userRouter.POST("delete", userApi.Delete)           // 删除用户
+		userRouter.GET("detail", userApi.Detail)            // 用户详情
+		userRouter.GET("list", userApi.List)                // 用户列表
+		userRouter.POST("resetPwd", userApi.ResetPwd)       // 重置密码
+		userRouter.POST("setStatus", userApi.SetUserStatus) // 设置状态
 	}
 
 	//菜单
 	menuRouter := routerGroup.Group("/system/menu")
 	{
-		menuRouter.GET("query", sysMenuApi.Query)      // 菜单分页查询
-		menuRouter.POST("add", sysMenuApi.Add)         // 添加菜单
-		menuRouter.POST("update", sysMenuApi.Update)   // 更新菜单
-		menuRouter.POST("delete", sysMenuApi.Delete)   // 删除菜单
-		menuRouter.GET("detail", sysMenuApi.Detail)    // 菜单详情
-		menuRouter.GET("list", sysMenuApi.List)        // 菜单列表
-		menuRouter.GET("tree", sysMenuApi.GetMenuTree) // 菜单树状
+		menuRouter.GET("query", menuApi.Query)      // 菜单分页查询
+		menuRouter.POST("add", menuApi.Add)         // 添加菜单
+		menuRouter.POST("update", menuApi.Update)   // 更新菜单
+		menuRouter.POST("delete", menuApi.Delete)   // 删除菜单
+		menuRouter.GET("detail", menuApi.Detail)    // 菜单详情
+		menuRouter.GET("list", menuApi.List)        // 菜单列表
+		menuRouter.GET("tree", menuApi.GetMenuTree) // 菜单树状
 	}
 
 	//角色
 	roleRouter := routerGroup.Group("/system/role")
 	{
-		roleRouter.GET("query", sysRoleApi.Query)    // 角色查询
-		roleRouter.POST("add", sysRoleApi.Add)       // 添加角色
-		roleRouter.POST("update", sysRoleApi.Update) // 更新角色
-		roleRouter.POST("delete", sysRoleApi.Delete) // 删除角色
-		roleRouter.GET("detail", sysRoleApi.Detail)  // 角色详情
-		roleRouter.GET("list", sysRoleApi.List)      // 角色列表
+		roleRouter.GET("query", roleApi.Query)    // 角色查询
+		roleRouter.POST("add", roleApi.Add)       // 添加角色
+		roleRouter.POST("update", roleApi.Update) // 更新角色
+		roleRouter.POST("delete", roleApi.Delete) // 删除角色
+		roleRouter.GET("detail", roleApi.Detail)  // 角色详情
+		roleRouter.GET("list", roleApi.List)      // 角色列表
 	}
 
 	//配置
 	configRouter := routerGroup.Group("/system/config")
 	{
-		configRouter.GET("query", sysConfigApi.Query)    // 配置查询
-		configRouter.POST("add", sysConfigApi.Add)       // 添加配置
-		configRouter.POST("update", sysConfigApi.Update) // 更新配置
-		configRouter.POST("delete", sysConfigApi.Delete) // 删除配置
-		configRouter.GET("detail", sysConfigApi.Detail)  // 配置详情
-		configRouter.GET("list", sysConfigApi.List)      // 配置列表
+		configRouter.GET("query", configApi.Query)    // 配置查询
+		configRouter.POST("add", configApi.Add)       // 添加配置
+		configRouter.POST("update", configApi.Update) // 更新配置
+		configRouter.POST("delete", configApi.Delete) // 删除配置
+		configRouter.GET("detail", configApi.Detail)  // 配置详情
+		configRouter.GET("list", configApi.List)      // 配置列表
 	}
 
 	//字典
 	dictRouter := routerGroup.Group("/system/dict")
 	{
-		dictRouter.GET("query", sysDictApi.Query)    // 字典查询
-		dictRouter.POST("add", sysDictApi.Add)       // 添加字典
-		dictRouter.POST("update", sysDictApi.Update) // 更新字典
-		dictRouter.POST("delete", sysDictApi.Delete) // 删除字典
-		dictRouter.GET("detail", sysDictApi.Detail)  // 字典详情
-		dictRouter.GET("list", sysDictApi.List)      // 字典列表
+		dictRouter.GET("query", dictApi.Query)    // 字典查询
+		dictRouter.POST("add", dictApi.Add)       // 添加字典
+		dictRouter.POST("update", dictApi.Update) // 更新字典
+		dictRouter.POST("delete", dictApi.Delete) // 删除字典
+		dictRouter.GET("detail", dictApi.Detail)  // 字典详情
+		dictRouter.GET("list", dictApi.List)      // 字典列表
 	}
 
 	//字典选项
 	dictItemRouter := routerGroup.Group("/system/dictItem")
 	{
-		dictItemRouter.GET("query", sysDictItemApi.Query)    // 字典选项查询
-		dictItemRouter.POST("add", sysDictItemApi.Add)       // 添加字典选项
-		dictItemRouter.POST("update", sysDictItemApi.Update) // 更新字典选项
-		dictItemRouter.POST("delete", sysDictItemApi.Delete) // 删除字典选项
-		dictItemRouter.GET("detail", sysDictItemApi.Detail)  // 字典选项详情
-		dictItemRouter.GET("list", sysDictItemApi.List)      // 字典选项列表
+		dictItemRouter.GET("query", dictItemApi.Query)    // 字典选项查询
+		dictItemRouter.POST("add", dictItemApi.Add)       // 添加字典选项
+		dictItemRouter.POST("update", dictItemApi.Update) // 更新字典选项
+		dictItemRouter.POST("delete", dictItemApi.Delete) // 删除字典选项
+		dictItemRouter.GET("detail", dictItemApi.Detail)  // 字典选项详情
+		dictItemRouter.GET("list", dictItemApi.List)      // 字典选项列表
 	}
 
 	//代码生成（表）
-	genTableApi := routerGroup.Group("/system/genTable")
+	genTableRouter := routerGroup.Group("/system/genTable")
 	{
-		genTableApi.GET("query", sysGenTableApi.Query)             // 代码生成查询
-		genTableApi.POST("add", sysGenTableApi.Add)                // 添加代码生成
-		genTableApi.POST("update", sysGenTableApi.Update)          // 更新代码生成
-		genTableApi.POST("delete", sysGenTableApi.Delete)          // 删除代码生成
-		genTableApi.GET("detail", sysGenTableApi.Detail)           // 代码生成详情
-		genTableApi.GET("tableList", sysGenTableApi.GetTableList)  // 获取表列表
-		genTableApi.GET("previewCode", sysGenTableApi.PreviewCode) // 导入表
+		genTableRouter.GET("query", genTableApi.Query)             // 代码生成查询
+		genTableRouter.POST("add", genTableApi.Add)                // 添加代码生成
+		genTableRouter.POST("update", genTableApi.Update)          // 更新代码生成
+		genTableRouter.POST("delete", genTableApi.Delete)          // 删除代码生成
+		genTableRouter.GET("detail", genTableApi.Detail)           // 代码生成详情
+		genTableRouter.GET("tableList", genTableApi.GetTableList)  // 获取表列表
+		genTableRouter.GET("previewCode", genTableApi.PreviewCode) // 导入表
 	}
 
 	//代码生成（表字段）
-	genTableColumnApi := routerGroup.Group("/system/genTableColumn")
+	genTableColumnRouter := routerGroup.Group("/system/genTableColumn")
 	{
-		genTableColumnApi.POST("update", sysGenTableColumn.Update) // 更新代码生成（表字段）
-		genTableColumnApi.GET("list", sysGenTableColumn.List)      // 代码生成（表字段）列表
+		genTableColumnRouter.POST("update", genTableColumnApi.Update) // 更新代码生成（表字段）
+		genTableColumnRouter.GET("list", genTableColumnApi.List)      // 代码生成（表字段）列表
 	}
 }

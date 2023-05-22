@@ -1,12 +1,5 @@
 package api
 
-import (
-	"go-fast-admin/server/app/admin/dto"
-	"go-fast-admin/server/common/dto/request"
-	"go-fast-admin/server/common/dto/response"
-	"github.com/gin-gonic/gin"
-)
-
 type {{.ModelName}}Api struct{}
 
 // Page
@@ -16,39 +9,14 @@ type {{.ModelName}}Api struct{}
 // @Param data query dto.{{.ModelName}}Query true "请求参数"
 // @Success 200 {object} response.JsonResult{data=response.PageResult{list=[]dto.{{.ModelName}}Vo}}
 // @Router /{{.ParamName}}/page [get]
-func ({{.ParamName}}Api *{{.ModelName}}Api) Page(c *gin.Context) {
+func ({{.ModuleName}}Api *{{.ModelName}}Api) Page(c *gin.Context) {
 	var query dto.{{.ModelName}}Query
 	c.ShouldBindQuery(&query)
-	list, total, err := userService.Page(query)
+	list, total, err := {{.ModuleName}}Service.Page(query)
 	response.Complete(response.PageResult{
 		List:       list,
 		TotalCount: total,
 	}, err, c)
-}
-
-// Detail
-// @Tags {{.FunctionName}}
-// @Summary {{.FunctionName}}详情
-// @Security ApiKeyAuth
-// @Param data query request.IdInfoDto true "用户id"
-// @Success 200 {object} response.JsonResult{data=dto.{{.ModelName}}Vo}
-// @Router /{{.ParamName}}/detail [get]
-func ({{.ParamName}}Api *{{.ModelName}}Api) Detail(c *gin.Context) {
-	var idInfoDto request.IdInfoDto
-	c.ShouldBindQuery(&idInfoDto)
-	obj, err := userService.Detail(idInfoDto.Id)
-	response.Complete(obj, err, c)
-}
-
-// List
-// @Tags {{.FunctionName}}
-// @Summary {{.FunctionName}}列表
-// @Security ApiKeyAuth
-// @Success 200 {object} response.JsonResult{data=[]dto.{{.ModelName}}Vo}
-// @Router /{{.ParamName}}/list [get]
-func ({{.ParamName}}Api *{{.ModelName}}Api) List(c *gin.Context) {
-	objs, err := userService.List()
-	response.Complete(objs, err, c)
 }
 
 // Add
@@ -58,10 +26,10 @@ func ({{.ParamName}}Api *{{.ModelName}}Api) List(c *gin.Context) {
 // @Param data body dto.{{.ModelName}}CreateDto true "请求参数"
 // @Success 200 {object} response.JsonResult
 // @Router /{{.ParamName}}/add [post]
-func ({{.ParamName}}Api *{{.ModelName}}Api) Add(c *gin.Context) {
+func ({{.ModuleName}}Api *{{.ModelName}}Api) Add(c *gin.Context) {
 	var createDto dto.{{.ModelName}}CreateDto
 	c.ShouldBindJSON(&createDto)
-	err := userService.Add(createDto)
+	err := {{.ModuleName}}Service.Add(createDto)
 	response.CompleteWithMessage(err, c)
 }
 
@@ -72,10 +40,10 @@ func ({{.ParamName}}Api *{{.ModelName}}Api) Add(c *gin.Context) {
 // @Param data body dto.{{.ModelName}}UpdateDto true "请求参数"
 // @Success 200 {object} response.JsonResult
 // @Router /{{.ParamName}}/update [post]
-func ({{.ParamName}}Api *{{.ModelName}}Api) Update(c *gin.Context) {
+func ({{.ModuleName}}Api *{{.ModelName}}Api) Update(c *gin.Context) {
 	var updateDto dto.{{.ModelName}}UpdateDto
 	c.ShouldBindJSON(&updateDto)
-	err := userService.Update(updateDto)
+	err := {{.ModuleName}}Service.Update(updateDto)
 	response.CompleteWithMessage(err, c)
 }
 
@@ -86,9 +54,35 @@ func ({{.ParamName}}Api *{{.ModelName}}Api) Update(c *gin.Context) {
 // @Param data body request.IdInfoDto true "请求参数"
 // @Success 200 {object} response.JsonResult
 // @Router /{{.ParamName}}/delete [post]
-func ({{.ParamName}}Api *{{.ModelName}}Api) Delete(c *gin.Context) {
+func ({{.ModuleName}}Api *{{.ModelName}}Api) Delete(c *gin.Context) {
 	var idInfoDto request.IdInfoDto
 	c.ShouldBindJSON(&idInfoDto)
-	err := userService.Delete(idInfoDto.Id)
+	err := {{.ModuleName}}Service.Delete(idInfoDto.Id)
 	response.CompleteWithMessage(err, c)
+}
+
+
+// Detail
+// @Tags {{.FunctionName}}
+// @Summary {{.FunctionName}}详情
+// @Security ApiKeyAuth
+// @Param data query request.IdInfoDto true "id"
+// @Success 200 {object} response.JsonResult{data=dto.{{.ModelName}}Vo}
+// @Router /{{.ParamName}}/detail [get]
+func ({{.ModuleName}}Api *{{.ModelName}}Api) Detail(c *gin.Context) {
+	var idInfoDto request.IdInfoDto
+	c.ShouldBindQuery(&idInfoDto)
+	obj, err := {{.ModuleName}}Service.Detail(idInfoDto.Id)
+	response.Complete(obj, err, c)
+}
+
+// List
+// @Tags {{.FunctionName}}
+// @Summary {{.FunctionName}}列表
+// @Security ApiKeyAuth
+// @Success 200 {object} response.JsonResult{data=[]dto.{{.ModelName}}Vo}
+// @Router /{{.ParamName}}/list [get]
+func ({{.ModuleName}}Api *{{.ModelName}}Api) List(c *gin.Context) {
+	objs, err := {{.ModuleName}}Service.List()
+	response.Complete(objs, err, c)
 }

@@ -2,7 +2,7 @@
 	<el-dialog :title="state.dialog.title" v-model="state.dialog.isShowDialog" width="750px" @close="closeDialog">
 		<el-form ref="dataFormRef" :model="state.dataForm" :rules="state.rules" size="default" label-width="90px">
 			<el-row :gutter="35">
-				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
+				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
 					<el-form-item label="表名称" prop="tableName">
 						<el-select v-model="state.dataForm.tableName" placeholder="请选择表名称" @change="changeTableName"
 							clearable class="w100">
@@ -12,37 +12,37 @@
 						</el-select>
 					</el-form-item>
 				</el-col>
-				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
-					<el-form-item label="表注释" prop="tableComment">
-						<el-input v-model="state.dataForm.tableComment" placeholder="请输入表注释" clearable></el-input>
+				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
+					<el-form-item label="表描述" prop="tableDescription">
+						<el-input v-model="state.dataForm.tableDescription" placeholder="请输入表注释" clearable></el-input>
 					</el-form-item>
 				</el-col>
-				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
+				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
 					<el-form-item label="业务名称" prop="businessName">
 						<el-input v-model="state.dataForm.businessName" placeholder="请输入业务名称" clearable></el-input>
 					</el-form-item>
 				</el-col>
-				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
+				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
 					<el-form-item label="模块名称" prop="moduleName">
 						<el-input v-model="state.dataForm.moduleName" placeholder="请输入模块名称" clearable></el-input>
 					</el-form-item>
 				</el-col>
-				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
+				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
 					<el-form-item label="实体名称" prop="modelName">
 						<el-input v-model="state.dataForm.modelName" placeholder="请输入实体名称" clearable></el-input>
 					</el-form-item>
 				</el-col>
-				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
+				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
 					<el-form-item label="参数名称" prop="paramName">
 						<el-input v-model="state.dataForm.paramName" placeholder="请输入参数名称" clearable></el-input>
 					</el-form-item>
 				</el-col>
-				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
+				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
 					<el-form-item label="功能名称" prop="functionName">
 						<el-input v-model="state.dataForm.functionName" placeholder="请输入功能名称" clearable></el-input>
 					</el-form-item>
 				</el-col>
-				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">					
+				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">					
 					<el-form-item label="上级菜单" prop="menuParentId">						
 						<el-tree-select v-model="state.dataForm.menuParentId" :data="state.menuOptions"  class="w100" :check-strictly="true"/>
 					</el-form-item>
@@ -72,7 +72,7 @@ const dataFormRef = ref();
 const state = reactive({
 	dataForm: {
 		tableName: '', // 表名称
-		tableComment: '', // 表注释
+		tableDescription: '', // 表描述
 		modelName: '', // 实体名称
 		businessName: '', // 业务名称
 		moduleName: '', // 模块名称
@@ -115,6 +115,7 @@ const closeDialog = () => {
 	// 重置表单
 	dataFormRef.value.resetFields();
 };
+
 // 提交
 const onSubmit = () => {
 	dataFormRef.value.validate(async (valid: boolean) => {
@@ -143,6 +144,7 @@ const onSubmit = () => {
 		}
 	});
 };
+
 // 获取表列表
 const getTableList = () => {
 	genTableApi.tableList().then((res) => {
@@ -151,7 +153,6 @@ const getTableList = () => {
 		}
 	});
 };
-
 
 // 获取路由
 const getMenuData = () => {
@@ -189,13 +190,14 @@ const buildMenuOptions = (list: any, parentId: number): any => {
 // 选中表
 const changeTableName = (val: string) => {
 	var table = state.tableList.filter((_: any) => _.tableName == val)[0]
-	state.dataForm.tableComment = table.tableComment
+	state.dataForm.tableDescription = table.tableDescription
 	state.dataForm.modelName = table.modelName
 	state.dataForm.businessName = table.businessName
 	state.dataForm.moduleName = table.moduleName
 	state.dataForm.functionName = table.functionName
 	state.dataForm.paramName = table.paramName
 }
+
 // 暴露变量
 defineExpose({
 	openDialog,

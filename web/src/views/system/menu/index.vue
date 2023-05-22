@@ -47,17 +47,12 @@
 import { defineAsyncComponent, ref, onMounted, reactive } from 'vue';
 import { RouteRecordRaw } from 'vue-router';
 import { ElMessageBox, ElMessage } from 'element-plus';
-import { storeToRefs } from 'pinia';
-import { useRoutesList } from '/@/stores/routesList';
 import menuApi from '/@/api/system/menu';
 
 // 引入组件
 const EditDialog = defineAsyncComponent(() => import('./component/editDialog.vue'));
 
 // 定义变量内容
-const stores = useRoutesList();
-const { routesList } = storeToRefs(stores);
-const queryFormRef = ref();
 const editFormRef = ref();
 const state = reactive({
 	tableData: {
@@ -71,12 +66,6 @@ onMounted(() => {
 	handleQuery();
 });
 
-// 重置
-const resetQueryForm = () => {
-	queryFormRef.value?.resetFields();
-	handleQuery();
-};
-
 // 获取路由数据，真实请从接口获取
 const handleQuery = () => {
 	state.tableData.loading = true;
@@ -87,6 +76,7 @@ const handleQuery = () => {
 		}
 	});
 };
+
 // 打开新增菜单弹窗
 const openEditDialog = (row?: any) => {
 	editFormRef.value.openDialog(row);
