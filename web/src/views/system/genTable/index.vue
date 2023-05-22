@@ -35,10 +35,9 @@
 				<el-table-column prop="id" label="编号" width="60" />
 				<el-table-column prop="tableName" label="表名称" show-overflow-tooltip></el-table-column>
 				<el-table-column prop="tableDescription" label="表描述" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="businessName" label="业务名称" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="moduleName" label="模块名称" show-overflow-tooltip></el-table-column>
 				<el-table-column prop="modelName" label="实体名称" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="functionName" label="功能名称" show-overflow-tooltip></el-table-column>
+				<el-table-column prop="businessName" label="业务名称" show-overflow-tooltip></el-table-column>
+				<el-table-column prop="moduleName" label="模块名称" show-overflow-tooltip></el-table-column>		
 				<el-table-column prop="createdAt" label="创建时间" show-overflow-tooltip></el-table-column>
 				<el-table-column label="操作" width="200">
 					<template #default="scope">
@@ -60,8 +59,7 @@
 			</el-pagination>
 		</el-card>
 		<EditDialog ref="editFormRef" @refresh="handleQuery()" />
-		<PreviewDialog ref="previewRef" @refresh="handleQuery()" />
-		<ConfigDialog ref="configFormRef" @refresh="handleQuery()" />
+		<PreviewDialog ref="previewRef" />
 	</div>
 </template>
 
@@ -74,13 +72,11 @@ import { useRoute, useRouter } from 'vue-router';
 // 引入组件
 const EditDialog = defineAsyncComponent(() => import('./component/editDialog.vue'));
 const PreviewDialog = defineAsyncComponent(() => import('./component/previewDialog.vue'));
-const ConfigDialog = defineAsyncComponent(() => import('./component/configDialog.vue'));
 
 // 定义变量内容
 const queryFormRef = ref();
 const editFormRef = ref();
 const previewRef = ref();
-const configFormRef = ref();
 const router = useRouter();
 
 const state = reactive({
@@ -91,7 +87,7 @@ const state = reactive({
 		param: {
 			pageNum: 1,
 			pageSize: 10,
-			roleName: undefined,
+			tableName: undefined,
 		},
 	},
 });

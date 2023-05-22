@@ -2,10 +2,11 @@
 	<el-dialog :title="state.dialog.title" v-model="state.dialog.isShowDialog" width="1200px" @close="closeDialog">
 		<el-tabs>
 			<el-tab-pane v-for="item in state.previewCodeList" :label="item.fileName">
-				<div>
-					<el-icon><CopyDocument /></el-icon>
-				</div>
-
+				<el-button @click="copyCode(item.fileContent)" circle style="position: absolute;right: 10px;top: 9px;">
+					<el-icon>
+						<ele-DocumentCopy />
+					</el-icon>
+				</el-button>
 				<highlightjs :code="item.fileContent" />
 			</el-tab-pane>
 		</el-tabs>
@@ -15,10 +16,9 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue';
 import genTableApi from '/@/api/system/genTable';
+import commonFunction from '/@/utils/commonFunction';
 
-// 定义子组件向父组件传值/事件
-const emit = defineEmits(['refresh']);
-
+const { copyText } = commonFunction();
 const state = reactive({
 	previewCodeList: [] as any,
 	dialog: {
@@ -50,6 +50,11 @@ const getPreviewCodeList = (tableId: number) => {
 			state.previewCodeList = res.data;
 		}
 	});
+};
+
+// 复制代码
+const copyCode = (text:string) => {
+	copyText(text)
 };
 
 // 暴露变量

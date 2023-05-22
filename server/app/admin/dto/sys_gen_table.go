@@ -13,17 +13,16 @@ type SysGenTableQuery struct {
 
 type SysGenTableVo struct {
 	Id               int64                 `json:"id" `
-	TableName        string                `json:"tableName"`           //表名称
-	TableDescription string                `json:"tableDescription"`    //表描述
-	ModelName        string                `json:"modelName"`           //实体名称
-	BusinessName     string                `json:"businessName"`        //业务名称
-	ModuleName       string                `json:"moduleName"`          //模块名称
-	FunctionName     string                `json:"functionName"`        //功能名称
-	ParamName        string                `json:"paramName"`           //参数名称
-	MenuParentId     int64                 `json:"menuParentId"`        //上级菜单
-	CreatedAt        time.Time             `json:"createdAt"`           //创建时间
-	UpdatedAt        time.Time             `json:"updatedAt"`           //更新时间
-	ColumnList       []SysGenTableColumnVo `json:"columnList" gorm:"-"` //字段列表
+	TableName        string                `json:"tableName"`             //表名称
+	TableDescription string                `json:"tableDescription"`      //表描述
+	ModelName        string                `json:"modelName"`             //实体名称
+	BusinessName     string                `json:"businessName"`          //业务名称
+	ModuleName       string                `json:"moduleName"`            //模块名称
+	ModuleAlias      string                `json:"moduleAlias"  gorm:"-"` //模块别名
+	MenuParentId     int64                 `json:"menuParentId"`          //上级菜单
+	CreatedAt        time.Time             `json:"createdAt"`             //创建时间
+	UpdatedAt        time.Time             `json:"updatedAt"`             //更新时间
+	ColumnList       []SysGenTableColumnVo `json:"columnList" gorm:"-"`   //字段列表
 }
 
 // SysGenTableAddDto 添加
@@ -33,8 +32,6 @@ type SysGenTableAddDto struct {
 	ModelName        string `json:"modelName"`        //实体名称
 	BusinessName     string `json:"businessName"`     //业务名称
 	ModuleName       string `json:"moduleName"`       //模块名称
-	FunctionName     string `json:"functionName"`     //功能名称
-	ParamName        string `json:"paramName"`        //参数名称
 	MenuParentId     int64  `json:"menuParentId"`     //上级菜单
 }
 
@@ -50,17 +47,7 @@ type TableInfoVo struct {
 	ModelName        string `json:"modelName"`        //实体名称
 	BusinessName     string `json:"businessName"`     //业务名称
 	ModuleName       string `json:"moduleName"`       //模块名称
-	FunctionName     string `json:"functionName"`     //功能名称
-	ParamName        string `json:"paramName"`        //参数名称
 }
-
-//type DbTableColumnInfoVo struct {
-//	TableName         string `json:"tableName"`         //表名称
-//	ColumnName        string `json:"columnName"`        //字段名称
-//	ColumnDescription string `json:"columnDescription"` //字段描述
-//	ColumnType        string `json:"columnType" `       //字段类型
-//	IsPk              bool   `json:"isPk"`              //是否主键
-//}
 
 type PreviewCodeVo struct {
 	FileName    string `json:"fileName"`    //文件名称

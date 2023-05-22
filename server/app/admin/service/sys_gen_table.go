@@ -43,8 +43,6 @@ func (s *SysGenTableService) Add(addDto dto.SysGenTableAddDto) error {
 		ModelName:        addDto.ModelName,
 		BusinessName:     addDto.BusinessName,
 		ModuleName:       addDto.ModuleName,
-		FunctionName:     addDto.FunctionName,
-		ParamName:        addDto.ParamName,
 		MenuParentId:     addDto.MenuParentId,
 	}
 	err := global.DB.Create(genTable).Error
@@ -63,8 +61,6 @@ func (s *SysGenTableService) Update(updateDto dto.SysGenTableUpdateDto) error {
 		"ModelName":        updateDto.ModelName,
 		"BusinessName":     updateDto.BusinessName,
 		"ModuleName":       updateDto.ModuleName,
-		"FunctionName":     updateDto.FunctionName,
-		"ParamName":        updateDto.ParamName,
 		"MenuParentId":     updateDto.MenuParentId,
 	}).Error
 	return err
@@ -80,7 +76,11 @@ func (s *SysGenTableService) Delete(id int64) error {
 func (s *SysGenTableService) Detail(id int64) (obj dto.SysGenTableVo, err error) {
 	err = global.DB.Model(&model.SysGenTable{}).Where("id = ?", id).Scan(&obj).Error
 
+	//模块别名
+	obj.ModuleAlias = strings.ToUpper(obj.ModuleName[:1]) + obj.ModuleName[1:]
 	var columnList []dto.SysGenTableColumnVo
+
+	//字段列表
 	global.DB.Model(&model.SysGenTableColumn{}).Where("table_id = ?", id).Scan(&columnList)
 	obj.ColumnList = columnList
 	return obj, err
@@ -97,27 +97,27 @@ func (s *SysGenTableService) GetTableList() (genTables []dto.TableInfoVo, err er
 
 	for i := 0; i < len(tableInfos); i++ {
 
-		//表名称
-		var tableName = tableInfos[i].TableName
-		if tableInfos[i].SchemaName != "" {
-			//pgsql 表名方式
-			tableName = tableInfos[i].SchemaName + "." + tableInfos[i].TableName
-		}
-
 		//业务名称
 		var businessName = strings.Split(tableInfos[i].TableName, "_")[0]
 		if businessName == "sys" {
 			businessName = "system"
 		}
 
+		nameList := strings.Split(tableInfos[i].TableName, "_")[1:]
+		snakeCase := strings.Join(nameList, "_")
+
+		//表名称
+		var tableName = tableInfos[i].TableName
+		if tableInfos[i].SchemaName != "" {
+			//pgsql 表名方式
+			tableName = tableInfos[i].SchemaName + "." + tableInfos[i].TableName
+		}
 		genTables = append(genTables, dto.TableInfoVo{
 			TableName:        tableName,
 			TableDescription: tableInfos[i].TableDescription,
 			ModelName:        utils.SnakeToUpperCamelCase(tableInfos[i].TableName),
 			BusinessName:     businessName,
-			ModuleName:       s.GetModuleName(tableInfos[i].TableName),
-			FunctionName:     s.GetFunctionName(tableInfos[i].TableDescription),
-			ParamName:        utils.SnakeToLowerCamelCase(tableInfos[i].TableName),
+			ModuleName:       utils.SnakeToLowerCamelCase(snakeCase),
 		})
 	}
 	return genTables, err
@@ -129,16 +129,6 @@ func (s *SysGenTableService) GetFunctionName(tableDescription string) string {
 		tableDescription = strings.Replace(tableDescription, "表", "", -1)
 	}
 	return tableDescription
-}
-
-// GetModuleName 获取业务名称 例如：sys_user=>user
-func (s *SysGenTableService) GetModuleName(tableName string) string {
-
-	nameList := strings.Split(tableName, "_")[1:]
-
-	snakeCase := strings.Join(nameList, "_")
-
-	return utils.SnakeToLowerCamelCase(snakeCase)
 }
 
 // AddColumn 导入表字段

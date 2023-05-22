@@ -32,16 +32,6 @@
 						<el-input v-model="state.dataForm.modelName" placeholder="请输入实体名称" clearable></el-input>
 					</el-form-item>
 				</el-col>
-				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
-					<el-form-item label="参数名称" prop="paramName">
-						<el-input v-model="state.dataForm.paramName" placeholder="请输入参数名称" clearable></el-input>
-					</el-form-item>
-				</el-col>
-				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
-					<el-form-item label="功能名称" prop="functionName">
-						<el-input v-model="state.dataForm.functionName" placeholder="请输入功能名称" clearable></el-input>
-					</el-form-item>
-				</el-col>
 				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">					
 					<el-form-item label="上级菜单" prop="menuParentId">						
 						<el-tree-select v-model="state.dataForm.menuParentId" :data="state.menuOptions"  class="w100" :check-strictly="true"/>

@@ -2071,41 +2071,6 @@ const docTemplate = `{
                     }
                 }
             }
-        },
-        "/test/demo": {
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "tags": [
-                    "测试"
-                ],
-                "summary": "测试demo",
-                "parameters": [
-                    {
-                        "description": "表名",
-                        "name": "tableNames",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/response.JsonResult"
-                        }
-                    }
-                }
-            }
         }
     },
     "definitions": {
@@ -2706,9 +2671,9 @@ const docTemplate = `{
                     "description": "业务名称",
                     "type": "string"
                 },
-                "functionName": {
-                    "description": "功能名称",
-                    "type": "string"
+                "menuParentId": {
+                    "description": "上级菜单",
+                    "type": "integer"
                 },
                 "modelName": {
                     "description": "实体名称",
@@ -2718,12 +2683,8 @@ const docTemplate = `{
                     "description": "模块名称",
                     "type": "string"
                 },
-                "paramName": {
-                    "description": "参数名称",
-                    "type": "string"
-                },
-                "tableComment": {
-                    "description": "表注释",
+                "tableDescription": {
+                    "description": "表描述",
                     "type": "string"
                 },
                 "tableName": {
@@ -2743,8 +2704,8 @@ const docTemplate = `{
                     "description": "代码类型",
                     "type": "string"
                 },
-                "columnComment": {
-                    "description": "字段注释",
+                "columnDescription": {
+                    "description": "字段描述",
                     "type": "string"
                 },
                 "columnName": {
@@ -2755,8 +2716,16 @@ const docTemplate = `{
                     "description": "字段类型",
                     "type": "string"
                 },
+                "componentType": {
+                    "description": "组件类型",
+                    "type": "string"
+                },
                 "createdAt": {
                     "description": "创建时间",
+                    "type": "string"
+                },
+                "dictCode": {
+                    "description": "字典代码",
                     "type": "string"
                 },
                 "id": {
@@ -2779,7 +2748,7 @@ const docTemplate = `{
                     "description": "是否查询字段（0否 1是）",
                     "type": "boolean"
                 },
-                "jsonField": {
+                "paramName": {
                     "description": "参数名称",
                     "type": "string"
                 },
@@ -2804,12 +2773,12 @@ const docTemplate = `{
                     "description": "业务名称",
                     "type": "string"
                 },
-                "functionName": {
-                    "description": "功能名称",
-                    "type": "string"
-                },
                 "id": {
                     "description": "编号",
+                    "type": "integer"
+                },
+                "menuParentId": {
+                    "description": "上级菜单",
                     "type": "integer"
                 },
                 "modelName": {
@@ -2820,12 +2789,8 @@ const docTemplate = `{
                     "description": "模块名称",
                     "type": "string"
                 },
-                "paramName": {
-                    "description": "参数名称",
-                    "type": "string"
-                },
-                "tableComment": {
-                    "description": "表注释",
+                "tableDescription": {
+                    "description": "表描述",
                     "type": "string"
                 },
                 "tableName": {
@@ -2841,31 +2806,38 @@ const docTemplate = `{
                     "description": "业务名称",
                     "type": "string"
                 },
+                "columnList": {
+                    "description": "字段列表",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.SysGenTableColumnVo"
+                    }
+                },
                 "createdAt": {
                     "description": "创建时间",
                     "type": "string"
                 },
-                "functionName": {
-                    "description": "功能名称",
-                    "type": "string"
-                },
                 "id": {
+                    "type": "integer"
+                },
+                "menuParentId": {
+                    "description": "上级菜单",
                     "type": "integer"
                 },
                 "modelName": {
                     "description": "实体名称",
                     "type": "string"
                 },
+                "moduleAlias": {
+                    "description": "模块别名",
+                    "type": "string"
+                },
                 "moduleName": {
                     "description": "模块名称",
                     "type": "string"
                 },
-                "paramName": {
-                    "description": "参数名称",
-                    "type": "string"
-                },
-                "tableComment": {
-                    "description": "表注释",
+                "tableDescription": {
+                    "description": "表描述",
                     "type": "string"
                 },
                 "tableName": {
@@ -3427,10 +3399,6 @@ const docTemplate = `{
                     "description": "业务名称",
                     "type": "string"
                 },
-                "functionName": {
-                    "description": "功能名称",
-                    "type": "string"
-                },
                 "modelName": {
                     "description": "实体名称",
                     "type": "string"
@@ -3439,12 +3407,8 @@ const docTemplate = `{
                     "description": "模块名称",
                     "type": "string"
                 },
-                "paramName": {
-                    "description": "参数名称",
-                    "type": "string"
-                },
-                "tableComment": {
-                    "description": "表注释",
+                "tableDescription": {
+                    "description": "表描述",
                     "type": "string"
                 },
                 "tableName": {

@@ -2,8 +2,8 @@ package dto
 
 import "go-fast-admin/server/common/dto/request"
 
-// SysUserQuery 查询
-type SysUserQuery struct {
+// {{.ModelName}}Query 查询
+type {{.ModelName}}Query struct {
 	request.PageQuery
 {{- range $index, $item := .ColumnList }}
 	{{- if $item.IsQuery }}
@@ -12,8 +12,8 @@ type SysUserQuery struct {
 {{- end }}
 }
 
-// SysUserCreateDto 创建
-type SysUserCreateDto struct {
+// {{.ModelName}}CreateDto 创建
+type {{.ModelName}}CreateDto struct {
 {{- range $index, $item := .ColumnList }}
 	{{- if $item.IsEdit  }}
 	{{$item.CodeField}}   {{$item.CodeType}} `json:"{{$item.ParamName}}"`   //{{$item.ColumnDescription}}
@@ -21,14 +21,14 @@ type SysUserCreateDto struct {
 {{- end }}
 }
 
-// SysUserUpdateDto 更新
-type SysUserUpdateDto struct {
+// {{.ModelName}}UpdateDto 更新
+type {{.ModelName}}UpdateDto struct {
 	Id int64 `json:"id"` //编号
-	SysUserCreateDto
+	{{.ModelName}}CreateDto
 }
 
-// SysUserVo 输出对象
-type SysUserVo struct {
+// {{.ModelName}}Vo 输出对象
+type {{.ModelName}}Vo struct {
 {{- range $index, $item := .ColumnList }}
 	{{- if $item.IsList  }}
 	{{$item.CodeField}}   {{$item.CodeType}} `json:"{{$item.ParamName}}"`   //{{$item.ColumnDescription}}
