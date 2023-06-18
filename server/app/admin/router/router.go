@@ -21,6 +21,7 @@ var (
 	roleApi           = &api.SysRoleApi{}
 	genTableApi       = &api.SysGenTableApi{}
 	genTableColumnApi = &api.SysGenTableColumnApi{}
+	monitorApi        = &api.SysMonitorApi{}
 )
 
 // InitPublicRouter 初始化公开路由
@@ -131,5 +132,14 @@ func (s *SystemRouter) InitPrivateRouter(routerGroup *gin.RouterGroup) {
 	{
 		genTableColumnRouter.POST("update", genTableColumnApi.Update) // 更新代码生成（表字段）
 		genTableColumnRouter.GET("list", genTableColumnApi.List)      // 代码生成（表字段）列表
+	}
+
+	//系统监控
+	monitorRouter := routerGroup.Group("/system/monitor")
+	{
+		monitorRouter.GET("cacheKeys", monitorApi.GetCacheKeys)   // 获取缓存key
+		monitorRouter.GET("cacheValue", monitorApi.GetCacheValue) // 获取缓存value
+		monitorRouter.POST("deleteCache", monitorApi.DeleteCache) // 删除缓存
+		monitorRouter.GET("serverInfo", monitorApi.GetServerInfo) // 获取服务器信息
 	}
 }

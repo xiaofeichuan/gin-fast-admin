@@ -95,7 +95,7 @@ const state = reactive({
 		param: {
 			pageNum: 1,
 			pageSize: 10,
-			roleName: undefined,
+			dictName: undefined,
 		},
 	},
 });

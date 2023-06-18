@@ -134,7 +134,7 @@ const openColumnDialog = (row?: any) => {
 }
 // 删除
 const handleDel = (row: any) => {
-	ElMessageBox.confirm(`此操作将永久删除角色名称：“${row.roleName}”?`, '提示', {
+	ElMessageBox.confirm(`是否删除此记录`, '提示', {
 		confirmButtonText: '确认',
 		cancelButtonText: '取消',
 		type: 'warning',

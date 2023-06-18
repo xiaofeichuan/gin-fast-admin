@@ -67,7 +67,7 @@
 	</div>
 </template>
 
-<script setup lang="ts" name="systemRole">
+<script setup lang="ts">
 import { defineAsyncComponent, reactive, onMounted, ref } from 'vue';
 import { ElMessageBox, ElMessage } from 'element-plus';
 import configApi from '/@/api/system/config';

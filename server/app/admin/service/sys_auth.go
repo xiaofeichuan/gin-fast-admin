@@ -7,7 +7,7 @@ import (
 	"go-fast-admin/server/app/admin/dto"
 	"go-fast-admin/server/app/admin/model"
 	"go-fast-admin/server/common/tools"
-	utils2 "go-fast-admin/server/common/utils"
+	"go-fast-admin/server/common/utils"
 	"go-fast-admin/server/global"
 	"gopkg.in/errgo.v2/fmt/errors"
 	"strconv"
@@ -47,26 +47,26 @@ func (s *SysAuthService) Login(loginDto dto.LoginDto) (token string, err error) 
 		return "", errors.New("账号已被禁用")
 	}
 
-	pwd := utils2.Md5(loginDto.Password + user.Salt)
+	pwd := utils.Md5(loginDto.Password + user.Salt)
 	if pwd != user.Password {
 		return "", errors.New("密码错误")
 	}
 
 	//生成token
-	var claims = utils2.UserAuthClaims{
+	var claims = utils.UserAuthClaims{
 		UserId:   user.Id,
 		UserName: user.UserName,
 		NickName: user.NickName,
 		UserType: user.UserType,
 	}
 
-	token, err = utils2.GenerateToken(claims, time.Now().AddDate(0, 0, 1))
+	token, err = utils.GenerateToken(claims, time.Now().AddDate(0, 0, 1))
 	return token, err
 }
 
 // GetUserInfo 获取用户信息
 func (s *SysAuthService) GetUserInfo(c *gin.Context) (userInfo dto.UserInfoVo, err error) {
-	currentUserId := utils2.GetUserId(c)
+	currentUserId := utils.GetUserId(c)
 
 	//查询用户信息
 	err = global.DB.Model(&model.SysUser{}).Where("id = ?", currentUserId).Scan(&userInfo).Error
@@ -75,7 +75,7 @@ func (s *SysAuthService) GetUserInfo(c *gin.Context) (userInfo dto.UserInfoVo, e
 	}
 
 	//是否超级管理员
-	if utils2.IsSuperAdmin(c) {
+	if utils.IsSuperAdmin(c) {
 		//所有权限
 		userInfo.Permission = []string{"*_*_*"}
 	} else {
@@ -118,7 +118,7 @@ func GetUserPermission(userId int64) (permissions []dto.UserPermissionVo) {
 // GetAuthMenu 获取用户菜单路由
 func (s *SysAuthService) GetAuthMenu(c *gin.Context) (authMenu []dto.AuthMenuVo, err error) {
 
-	var currentUserId = utils2.GetUserId(c)
+	var currentUserId = utils.GetUserId(c)
 
 	var cacheKey = consts.CacheKeySysUserMenu + strconv.FormatInt(currentUserId, 10)
 
@@ -129,7 +129,7 @@ func (s *SysAuthService) GetAuthMenu(c *gin.Context) (authMenu []dto.AuthMenuVo,
 	if authMenu == nil || len(authMenu) == 0 {
 		var menuList []model.SysMenu
 		//是否超级管理员
-		if utils2.IsSuperAdmin(c) {
+		if utils.IsSuperAdmin(c) {
 			//超级管理员，拥有最高权限
 			global.DB.Model(&model.SysMenu{}).Where("menu_type IN ? AND status = ? ",
 				menuTypes,
@@ -137,7 +137,7 @@ func (s *SysAuthService) GetAuthMenu(c *gin.Context) (authMenu []dto.AuthMenuVo,
 		} else {
 
 			var menuIds []int64
-			var userId = utils2.GetUserId(c)
+			var userId = utils.GetUserId(c)
 			//用户拥有菜单id
 			global.DB.Table("sys_user_role userRole").Select("roleMenu.menu_id").
 				Joins("LEFT JOIN sys_role_menu roleMenu ON userRole.role_id = roleMenu.role_id").
@@ -188,21 +188,21 @@ func BuildAuthMenuTree(menuList []model.SysMenu, parentId int64) (menus []dto.Au
 // UpdatePwd 修改密码
 func (s *SysAuthService) UpdatePwd(c *gin.Context, updatePwdDto dto.UpdatePwdDto) error {
 	var user model.SysUser
-	currentUserId := utils2.GetUserId(c)
+	currentUserId := utils.GetUserId(c)
 	err := global.DB.Model(&model.SysUser{}).Where("id = ?", currentUserId).Scan(&user).Error
 	if err != nil {
 		return err
 	}
-	encryptPassword := utils2.Md5(updatePwdDto.Password + user.Salt)
+	encryptPassword := utils.Md5(updatePwdDto.Password + user.Salt)
 	if encryptPassword != user.Password {
 		return errors.New("密码错误")
 	}
 
 	//密码盐
-	salt := utils2.GetRoundNumber(15)
+	salt := utils.GetRoundNumber(15)
 
 	//加密 => MD5（密码+密码盐）
-	pwd := utils2.Md5(updatePwdDto.NewPassword + salt)
+	pwd := utils.Md5(updatePwdDto.NewPassword + salt)
 
 	//更新密码
 	err = global.DB.Model(&model.SysUser{}).Where("id = ?", user.Id).Updates(map[string]interface{}{

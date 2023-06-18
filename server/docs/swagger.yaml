@@ -1842,6 +1842,89 @@ paths:
       summary: 更新菜单
       tags:
       - 菜单
+  /system/monitor/cacheKeys:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JsonResult'
+            - properties:
+                data:
+                  items:
+                    type: string
+                  type: array
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 获取缓存key
+      tags:
+      - 监控
+  /system/monitor/cacheValue:
+    get:
+      parameters:
+      - description: 缓存Key
+        in: query
+        name: key
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JsonResult'
+            - properties:
+                data:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 获取缓存value
+      tags:
+      - 监控
+  /system/monitor/deleteCache:
+    post:
+      parameters:
+      - description: 缓存Key
+        in: query
+        name: key
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.JsonResult'
+      security:
+      - ApiKeyAuth: []
+      summary: 删除缓存
+      tags:
+      - 监控
+  /system/monitor/serverInfo:
+    get:
+      parameters:
+      - description: 缓存Key
+        in: query
+        name: key
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.JsonResult'
+            - properties:
+                data:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 获取服务器信息
+      tags:
+      - 监控
   /system/role/add:
     post:
       parameters:

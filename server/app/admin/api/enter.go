@@ -12,4 +12,5 @@ var (
 	menuService           = &adminService.SysMenuService{}
 	genTableService       = &adminService.SysGenTableService{}
 	genTableColumnService = &adminService.SysGenTableColumnService{}
+	monitorService        = &adminService.MonitorService{}
 )

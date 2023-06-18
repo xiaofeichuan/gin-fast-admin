@@ -59,3 +59,19 @@ func (*RedisTool) DelByPattern(pattern string) {
 		rdb.Del(ctx, keys[i])
 	}
 }
+
+// GetAllKeys 获取所有key
+func (*RedisTool) GetAllKeys() (keys []string) {
+	iter := rdb.Scan(ctx, 0, "*", 0).Iterator()
+	for iter.Next(ctx) {
+		key := iter.Val()
+		keys = append(keys, key)
+	}
+	return keys
+}
+
+// GetValue 获取缓存
+func (*RedisTool) GetValue(key string) string {
+	str, _ := rdb.Get(ctx, key).Result()
+	return str
+}

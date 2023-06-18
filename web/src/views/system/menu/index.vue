@@ -1,5 +1,5 @@
 <template>
-	<div class="layout-pd">
+	<div class="layout-padding">
 		<el-card shadow="hover" style="margin-top: 10px">
 			<div>
 				<el-button type="primary" @click="openEditDialog()" v-permission="['system_menu_add']" plain>
