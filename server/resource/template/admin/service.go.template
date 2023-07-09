@@ -15,9 +15,15 @@ func (s *{{.ModelName}}Service) Query(query dto.{{.ModelName}}Query) (list []dto
 	//查询条件
 	{{- range $index, $item := .ColumnList }}
 		{{- if $item.IsQuery  }}
-	if query.{{$item.CodeField}}  != "" {
-		db = db.Where("`{{$item.ColumnName}} ` LIKE ?", "%"+query.{{$item.CodeField}} +"%")
+			{{- if eq $item.ComponentType "DateTimePicker" }}
+	if query.Start{{$item.CodeField}} != "" && query.End{{$item.CodeField}} != "" {
+		db = db.Where("`{{$item.ColumnName}}` BETWEEN ? and ?", query.Start{{$item.CodeField}}, query.End{{$item.CodeField}})
 	}
+			{{- else }}
+	if query.{{$item.CodeField}}  != "" {
+		db = db.Where("`{{$item.ColumnName}}` LIKE ?", "%"+query.{{$item.CodeField}} +"%")
+	}
+			{{- end }}
 		{{- end }}
 	{{- end }}
 
@@ -36,14 +42,14 @@ func (s *{{.ModelName}}Service) Query(query dto.{{.ModelName}}Query) (list []dto
 
 // Add 添加{{.TableDescription}}
 func (s *{{.ModelName}}Service) Add(addDto dto.{{.ModelName}}AddDto) error {
-	var user = &model.{{.ModelName}}{
+	var model = &model.{{.ModelName}}{
 {{- range $index, $item := .ColumnList -}}
 	{{- if $item.IsEdit  }}
-		{{$item.CodeField}} :  addDto.{{$item.CodeField}}
+		{{$item.CodeField}} :  addDto.{{$item.CodeField}},
 	{{- end }}
 {{- end }}
 	}
-	err := global.DB.Create(role).Error
+	err := global.DB.Create(model).Error
 	return err
 }
 
@@ -52,7 +58,7 @@ func (s *{{.ModelName}}Service) Update(updateDto dto.{{.ModelName}}UpdateDto) er
 	err := global.DB.Model(&model.{{.ModelName}}{}).Where("id = ?", updateDto.Id).Updates(map[string]interface{}{
 {{- range $index, $item := .ColumnList }}
 	{{- if $item.IsEdit  }}
-		{{$item.CodeField}} :  updateDto.{{$item.CodeField}}
+		"{{$item.CodeField}}" :  updateDto.{{$item.CodeField}},
 	{{- end }}
 {{- end }}
 	}).Error

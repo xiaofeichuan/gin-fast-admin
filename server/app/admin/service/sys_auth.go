@@ -59,8 +59,8 @@ func (s *SysAuthService) Login(loginDto dto.LoginDto) (token string, err error) 
 		NickName: user.NickName,
 		UserType: user.UserType,
 	}
-
 	token, err = utils.GenerateToken(claims, time.Now().AddDate(0, 0, 1))
+
 	return token, err
 }
 

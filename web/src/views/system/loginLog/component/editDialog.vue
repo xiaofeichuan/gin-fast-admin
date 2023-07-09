@@ -2,59 +2,36 @@
 	<el-dialog :title="state.dialog.title" v-model="state.dialog.isShowDialog" width="750px" @close="closeDialog">
 		<el-form ref="dataFormRef" :model="state.dataForm" :rules="state.rules" size="default" label-width="90px">
 			<el-row :gutter="35">
-{{- range $index, $item := .ColumnList }}
-	{{- if $item.IsEdit }}
-		{{- if eq $item.ComponentType "Textarea" }}
 				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
-					<el-form-item label="{{$item.ColumnDescription}}" prop="{{$item.ParamName}}">
-						<el-input v-model="state.dataForm.{{$item.ParamName}}" type="textarea" :rows="2" placeholder="请输入{{$item.ColumnDescription}}" clearable></el-input>
-					</el-form-item>
-				</el-col>       
-		{{- else if eq $item.ComponentType "Switch" }}
-				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
-					<el-form-item label="{{$item.ColumnDescription}}" prop="{{$item.ParamName}}">
-						<el-switch
-							v-model="state.dataForm.{{$item.ParamName}}"
-							:active-value="0"
-							:inactive-value="1"
-							inline-prompt
-							active-text="启用"
-							inactive-text="禁用"
-						></el-switch>
+					<el-form-item label="用户id" prop="userId">
+						<el-input v-model="state.dataForm.userId" placeholder="请输入用户id" clearable></el-input>
 					</el-form-item>
 				</el-col>
-		{{- else if eq $item.ComponentType "Select" }}
 				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
-					<el-form-item label="{{$item.ColumnDescription}}" prop="{{$item.ParamName}}">
-						<el-select v-model="state.dataForm.{{$item.ParamName}}" placeholder="请选择性别" clearable>
-							<el-option v-for="item in useDictData().getDictItem('{{$item.DictCode}}')" :key="item.dictItemValue"
-								:label="item.dictItemName" :value="item.dictItemValue">
-							</el-option>
-						</el-select>
+					<el-form-item label="登录时间" prop="loginTime">
+						<el-date-picker v-model="state.dataForm.loginTime" type="datetime" style="width: 100%;"/>
 					</el-form-item>
 				</el-col>
-		{{- else if eq $item.ComponentType "InputNumber" }}
 				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
-					<el-form-item label="{{$item.ColumnDescription}}" prop="{{$item.ParamName}}">
-						<el-input-number v-model="state.dataForm.{{$item.ParamName}}" :min="0" :max="999" controls-position="right"
-							placeholder="请输入{{$item.ColumnDescription}}"/>
+					<el-form-item label="IP地址" prop="ipAddress">
+						<el-input v-model="state.dataForm.ipAddress" placeholder="请输入IP地址" clearable></el-input>
 					</el-form-item>
 				</el-col>
-		{{- else if eq $item.ComponentType "DateTimePicker" }}
 				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
-					<el-form-item label="{{$item.ColumnDescription}}" prop="{{$item.ParamName}}">
-						<el-date-picker v-model="state.dataForm.{{$item.ParamName}}" type="datetime" style="width: 100%;"/>
+					<el-form-item label="登录位置" prop="location">
+						<el-input v-model="state.dataForm.location" placeholder="请输入登录位置" clearable></el-input>
 					</el-form-item>
 				</el-col>
-		{{- else }}
 				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
-					<el-form-item label="{{$item.ColumnDescription}}" prop="{{$item.ParamName}}">
-						<el-input v-model="state.dataForm.{{$item.ParamName}}" placeholder="请输入{{$item.ColumnDescription}}" clearable></el-input>
+					<el-form-item label="浏览器" prop="browser">
+						<el-input v-model="state.dataForm.browser" placeholder="请输入浏览器" clearable></el-input>
 					</el-form-item>
 				</el-col>
-		{{- end }}
-	{{- end }}
-{{- end }}      
+				<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
+					<el-form-item label="操作系统" prop="operatingSystem">
+						<el-input v-model="state.dataForm.operatingSystem" placeholder="请输入操作系统" clearable></el-input>
+					</el-form-item>
+				</el-col>      
 			</el-row>
 		</el-form>
 		<template #footer>
@@ -69,7 +46,7 @@
 <script setup lang="ts">
 import { reactive, ref ,nextTick} from 'vue';
 import { ElMessage } from 'element-plus';
-import {{.ModuleName}}Api from '/@/api/{{.BusinessName}}/{{.ModuleName}}';
+import loginLogApi from '/@/api/system/loginLog';
 
 // 定义子组件向父组件传值/事件
 const emit = defineEmits(['refresh']);
@@ -78,11 +55,12 @@ const emit = defineEmits(['refresh']);
 const dataFormRef = ref();
 const state = reactive({
 	dataForm: {
-{{- range $index, $item := .ColumnList }}
-	{{- if $item.IsEdit }}
-		{{$item.ParamName}}: undefined,// {{$item.ColumnDescription}}
-	{{- end }}
-{{- end }}
+		userId: undefined,// 用户id
+		loginTime: undefined,// 登录时间
+		ipAddress: undefined,// IP地址
+		location: undefined,// 登录位置
+		browser: undefined,// 浏览器
+		operatingSystem: undefined,// 操作系统
 	},
 	rules: {},
 	dialog: {
@@ -123,7 +101,7 @@ const onSubmit = () => {
 
 		if (state.dialog.isEdit) {
 			//更新
-			{{.ModuleName}}Api.update(state.dataForm).then((res) => {
+			loginLogApi.update(state.dataForm).then((res) => {
 				if (res.success) {
 					ElMessage.success('更新成功');
 					emit('refresh'); //刷新页面
@@ -132,7 +110,7 @@ const onSubmit = () => {
 			});
 		} else {
 			//添加
-			{{.ModuleName}}Api.add(state.dataForm).then((res) => {
+			loginLogApi.add(state.dataForm).then((res) => {
 				if (res.success) {
 					ElMessage.success('添加成功');
 					emit('refresh'); //刷新页面

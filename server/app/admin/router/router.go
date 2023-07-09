@@ -22,6 +22,7 @@ var (
 	genTableApi       = &api.SysGenTableApi{}
 	genTableColumnApi = &api.SysGenTableColumnApi{}
 	monitorApi        = &api.SysMonitorApi{}
+	loginLogApi       = &api.SysLoginLogApi{}
 )
 
 // InitPublicRouter 初始化公开路由
@@ -141,5 +142,16 @@ func (s *SystemRouter) InitPrivateRouter(routerGroup *gin.RouterGroup) {
 		monitorRouter.GET("cacheValue", monitorApi.GetCacheValue) // 获取缓存value
 		monitorRouter.POST("deleteCache", monitorApi.DeleteCache) // 删除缓存
 		monitorRouter.GET("serverInfo", monitorApi.GetServerInfo) // 获取服务器信息
+	}
+
+	//登录日志
+	loginLogRouter := routerGroup.Group("system/loginLog")
+	{
+		loginLogRouter.GET("query", loginLogApi.Query)    // 登录日志分页查询
+		loginLogRouter.POST("add", loginLogApi.Add)       // 添加登录日志
+		loginLogRouter.POST("update", loginLogApi.Update) // 更新登录日志
+		loginLogRouter.POST("delete", loginLogApi.Delete) // 删除登录日志
+		loginLogRouter.GET("detail", loginLogApi.Detail)  // 登录日志详情
+		loginLogRouter.GET("list", loginLogApi.List)      // 登录日志列表
 	}
 }

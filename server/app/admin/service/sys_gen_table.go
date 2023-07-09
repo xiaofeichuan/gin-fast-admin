@@ -69,6 +69,12 @@ func (s *SysGenTableService) Update(updateDto dto.SysGenTableUpdateDto) error {
 // Delete 删除业务表
 func (s *SysGenTableService) Delete(id int64) error {
 	err := global.DB.Delete(&model.SysGenTable{}, "id = ?", id).Error
+	if err != nil {
+		return err
+	}
+
+	//删除字段
+	err = global.DB.Delete(&model.SysGenTableColumn{}, "table_id = ?", id).Error
 	return err
 }
 
@@ -159,10 +165,12 @@ func (s *SysGenTableService) AddColumn(tableName string, tableId int64) error {
 
 		//组件类型
 		var componentType = consts.ComponentTypeInput
+		var queryMethod = "=="
 		if codeType == "bool" {
 			componentType = consts.ComponentTypeSwitch
 		} else if codeType == "time.Time" {
 			componentType = consts.ComponentTypeDateTimePicker
+			queryMethod = "BETWEEN"
 		} else if codeType == "int" {
 			componentType = consts.ComponentTypeInputNumber
 		}
@@ -179,7 +187,7 @@ func (s *SysGenTableService) AddColumn(tableName string, tableId int64) error {
 			IsEdit:            isEdit,
 			IsList:            true,
 			IsQuery:           false,
-			QueryMethod:       "==",
+			QueryMethod:       queryMethod,
 			ComponentType:     componentType,
 		})
 	}

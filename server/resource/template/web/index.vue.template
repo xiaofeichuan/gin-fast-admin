@@ -12,6 +12,10 @@
 						</el-option>
 					</el-select>
 				</el-form-item>
+		{{- else if eq $item.ComponentType "DateTimePicker" }}
+				<el-form-item label="{{$item.ColumnDescription}}" prop="{{$item.ParamName}}">
+					<el-date-picker v-model="state.tableData.{{$item.ParamName}}" style="width: 240px" type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期"  value-format="YYYY-MM-DD HH:mm:ss" :default-time="[new Date(2000, 1, 1, 0, 0, 0), new Date(2000, 2, 1, 23, 59, 59),]" />
+				</el-form-item>
         {{- else }}
 				<el-form-item label="{{$item.ColumnDescription}}" prop="{{$item.ParamName}}">
 					<el-input v-model="state.tableData.param.{{$item.ParamName}}" placeholder="请输入{{$item.ColumnDescription}}" style="width: 200px" @keyup.enter="handleQuery" clearable />
@@ -103,12 +107,22 @@ const state = reactive({
 		data: [],
 		total: 0,
 		loading: false,
+{{- range $index, $item := .ColumnList }}
+	{{- if and $item.IsQuery (eq $item.ComponentType "DateTimePicker") }}
+		{{$item.ParamName}}: [],
+	{{- end }}
+{{- end }}
 		param: {
 			pageNum: 1,
 			pageSize: 10,
 {{- range $index, $item := .ColumnList }}
     {{- if $item.IsQuery }}
+		{{- if eq $item.ComponentType "DateTimePicker" }}
+			start{{$item.CodeField}}: '',
+			end{{$item.CodeField}}: '',
+		{{- else }}
 			{{$item.ParamName}}: undefined,
+		{{- end }}
     {{- end }}
 {{- end }}
 		},
@@ -129,6 +143,12 @@ const resetQueryForm = () => {
 // 初始化表格数据
 const handleQuery = () => {
 	state.tableData.loading = true;
+{{- range $index, $item := .ColumnList }}
+	{{- if and $item.IsQuery (eq $item.ComponentType "DateTimePicker") }}
+	state.tableData.param.start{{$item.CodeField}} = state.tableData.{{$item.ParamName}}[0]
+	state.tableData.param.end{{$item.CodeField}} = state.tableData.{{$item.ParamName}}[1]
+	{{- end }}
+{{- end }}
 	{{.ModuleName}}Api.query(state.tableData.param).then((res) => {
 		if (res.success) {
 			state.tableData.data = res.data.list;

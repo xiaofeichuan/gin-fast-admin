@@ -78,7 +78,7 @@ func (monitorService *MonitorService) GetServerInfo() (server dto.ServerInfoVo) 
 		server.Disk = append(server.Disk, usage)
 	}
 
-	//获取公网ip
+	// 获取公网ip
 	resp, err := http.Get("http://myip.ipip.net/")
 	if err != nil {
 		fmt.Println(err)

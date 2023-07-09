@@ -13,4 +13,5 @@ var (
 	genTableService       = &adminService.SysGenTableService{}
 	genTableColumnService = &adminService.SysGenTableColumnService{}
 	monitorService        = &adminService.MonitorService{}
+	loginLogService       = &adminService.SysLoginLogService{}
 )
